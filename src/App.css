@@ -1,0 +1,19 @@
+/* Application: layouts. */
+div {
+    text-align: center;
+    gap: 10px;
+}
+.Description {
+    text-align: left;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+.Column {
+    display: flex;
+    flex-direction: column;
+}
+.Graph {
+    display: grid;
+    grid-template-columns: repeat( 1, 1fr );
+    justify-items: center;
+}
