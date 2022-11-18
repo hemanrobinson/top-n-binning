@@ -13,10 +13,10 @@ const App = () => {
             <div className="Description">
                 <h1>Binning</h1>
                 <p>
-                Shneiderman taught us all to <a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1996eyes.pdf">"Overview first, zoom and filter, then details-on-demand"</a>.  Is the word "zoom" meant to include binning?
+                Shneiderman taught us all to <a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1996eyes.pdf">"Overview first, zoom and filter, then details-on-demand"</a>.  Does the word "zoom" include binning?
                 </p>
                 <p>
-                "Zooming" refers to scaling, while "binning" refers to grouping. Both adjustments enable users to explore their data.  Particularly with large data sets, which often require aggregate graphs, interactive binning can help us when zooming cannot.
+                "Zooming" usually refers to scaling, while "binning" refers to grouping.  Both enable users to explore their data.  Particularly with large data sets, which often require aggregate graphs, interactive binning can help us when zooming cannot.
                 </p>
                 <p>
                 To minimize distraction from the data display, controls are displayed only when needed.  Hover over the graph to see the binning controls.
