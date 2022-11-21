@@ -16,7 +16,7 @@ const App = () => {
                 Shneiderman taught us all to <a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1996eyes.pdf">"Overview first, zoom and filter, then details-on-demand"</a>.  Does the word "zoom" include binning?
                 </p>
                 <p>
-                "Zooming" usually refers to scaling, while "binning" refers to grouping.  Both enable users to explore their data.  Particularly with large data sets, which often require aggregate graphs, interactive binning can help us when zooming cannot.
+                "Zooming" usually refers to scaling, while "binning" refers to grouping.  Both enable users to explore their data.  Particularly in aggregate graphs of large data sets, interactive binning can help us when zooming cannot.
                 </p>
                 <p>
                 To minimize distraction from the data display, controls are displayed only when needed.  Hover over the graph to see the binning controls.
@@ -32,10 +32,10 @@ const App = () => {
             <div className="Description">
                 <h2>Categorical Data</h2>
                 <p>
-                Categorical data presents a different problem.  When there are many categories, the smaller ones can be usefully combined into an "Other" category.  This clarifies the largest categories, the "Top 10", "Top 20", or however many of the user desires.
+                Categorical data presents a different problem.  When there are many categories, the smaller ones can be usefully combined into an "Other" category.  This clarifies the largest categories -- the "Top 5", "Top 10", or however many the user desires.
                 </p>
                 <p>
-                "Other" categories have been used for at least fifty years.  With a modern user interface, we can make them interactively adjustable and efficient for the user.  This is particularly useful when exploring "long-tailed" distributions, as in the bar chart below.
+                "Other" bins have been used for many years.  With a modern user interface, we can make them interactively adjustable and efficient for the user.  This is particularly useful when exploring "long-tailed" distributions, as in the bar chart below.
                 </p>
             </div>
             <div className="Graph">

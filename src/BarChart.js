@@ -17,7 +17,7 @@ import './Graph.css';
 const BarChart = ( props ) => {
     
     // Initialization.
-    const width = 1000,
+    const width = 650,
         height = 400,
         padding = { top: 20, right: 20, bottom: 0, left: 20 },
         margin = { top: 0, right: 0, bottom: 120, left: 50 };
@@ -131,20 +131,90 @@ BarChart.draw = ( ref, width, height, margin, padding, isZooming, isXBinning, is
     const svg = d3.select( ref.current.childNodes[ 0 ]);
     svg.selectAll( "*" ).remove();
 
+    // If the "Other" bar is long, shorten it.
+    let newBars = bars.concat();
+    let yScale1 = yScale;
+    const k = 1.5;
+    const n = bars.length;
+    let maxLength = d3.max( bars.slice( 0, n - 1 ), d => d[ 1 ]);
+    const isOtherLong = ( n > 1 ) && ( bars[ n - 1 ][ 0 ] === "Other" ) && ( bars[ n - 1 ][ 1 ] > k * maxLength );
+    if( isOtherLong ) {
+        newBars[ n - 1 ][ 1 ] = k * maxLength;
+        let yDomain1 = [ 0, 1.05 * d3.max( newBars, d => d[ 1 ])];     // a 5% margin
+        yScale1 = d3.scaleLinear()
+            .domain( yDomain1 )
+            .range([ height - margin.bottom - padding.bottom, margin.top + padding.top ]);
+    }
+    
     // Draw the bars.
     svg.selectAll( "rect" )
-        .data( bars )
+        .data( newBars )
         .enter()
         .append( "rect" )
         .attr( "x", ( d ) => xScale( d[ 0 ]))
-        .attr( "y", ( d ) => yScale( d[ 1 ]))
+        .attr( "y", ( d ) => yScale1( d[ 1 ]))
         .attr( "width", xScale.bandwidth())
-        .attr( "height", ( d ) => (( xScale.domain().indexOf( d[ 0 ]) >= 0 ) ? Math.max( 0, height - yScale( d[ 1 ])) : 0 ))
+        .attr( "height", ( d ) => (( xScale.domain().indexOf( d[ 0 ]) >= 0 ) ? Math.max( 0, height - yScale1( d[ 1 ])) : 0 ))
         .style( "fill", "#99bbdd" );
     
     // Draw the axes and the controls.
-    Graph.drawAxes(     ref, width, height, margin, padding, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel );
-    Graph.drawControls( ref, width, height, margin, padding, isZooming, isXBinning, isYBinning, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel );
+    Graph.drawAxes(     ref, width, height, margin, padding, xScale, yScale1, xDomain0, yDomain0, xLabel, yLabel );
+    if( isOtherLong ) {
+        
+        // Clear the margin.
+        const d = 10,
+            y = yScale1( maxLength ) - 2 * d,
+            colorLight = "#ebeeef";
+        svg.append( "rect" )
+            .attr( "x", 0 )
+            .attr( "y", margin.top + padding.top )
+            .attr( "width", margin.left )
+            .attr( "height", y - margin.top - padding.top )
+            .style( "fill", colorLight );
+    
+        // Draw the second Y axis.
+        let yDomain2 = yDomain0.concat();
+        yDomain2[ 0 ] = yDomain2[ 1 ] * ( height - y ) / ( height - margin.bottom - padding.bottom - margin.top - padding.top );
+        let yScale2 = d3.scaleLinear()
+            .domain( yDomain2 )
+            .range([ y, margin.top + padding.top ]);
+        svg.append( "g" )
+            .attr( "class", "axis" )
+            .attr( "transform", "translate( " + margin.left + ", 0 )" )
+            .call( d3.axisLeft( yScale2 ).ticks( 3 ));
+        
+        // Draw the breaks.
+        let breakWidth = 30,
+            x = margin.left - breakWidth / 2;
+        svg.append( "rect" )
+            .attr( "x", x )
+            .attr( "y", y )
+            .attr( "width", breakWidth )
+            .attr( "height", d )
+            .style( "fill", "#939ba1" );
+        svg.append( "rect" )
+            .attr( "x", x )
+            .attr( "y", y + 1 )
+            .attr( "width", breakWidth )
+            .attr( "height", d - 2 )
+            .style( "fill", "#ffffff" );
+        breakWidth = xScale.step();
+        const barPadding = ( width - margin.left - margin.right - padding.left - padding.right - n * breakWidth );
+        x = width - margin.right - padding.right - breakWidth - barPadding / 2;
+        svg.append( "rect" )
+            .attr( "x", x )
+            .attr( "y", y )
+            .attr( "width", breakWidth )
+            .attr( "height", d )
+            .style( "fill", "#939ba1" );
+        svg.append( "rect" )
+            .attr( "x", x )
+            .attr( "y", y + 1 )
+            .attr( "width", breakWidth )
+            .attr( "height", d - 2 )
+            .style( "fill", "#ffffff" );
+    }
+    Graph.drawControls( ref, width, height, margin, padding, isZooming, isXBinning, isYBinning, xScale, yScale1, xDomain0, yDomain0, xLabel, yLabel );
 };
 
 export default BarChart;

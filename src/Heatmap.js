@@ -18,7 +18,7 @@ const Heatmap = ( props ) => {
     
     // Initialization.
     const width = 400,
-        height = 600,
+        height = 650,
         padding = { top: 20, right: 20, bottom: 10, left: 10 },
         margin = { top: 0, right: 0, bottom: 50, left: 80 };
     let ref = useRef(),
