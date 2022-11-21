@@ -107,6 +107,13 @@ const BarChart = ( props ) => {
 };
 
 /**
+ * Length of "Other" bar, as a percentage of maximum bar length, >1.
+ *
+ * @const {number}
+ */
+BarChart.otherLength = 1.3;
+
+/**
  * Draws the bar chart.
  *
  * @param  {Object}   ref          reference to DIV
@@ -134,7 +141,7 @@ BarChart.draw = ( ref, width, height, margin, padding, isZooming, isXBinning, is
     // If the "Other" bar is long, shorten it.
     let newBars = bars.concat();
     let yScale1 = yScale;
-    const k = 1.5;
+    const k = BarChart.otherLength;
     const n = bars.length;
     let maxLength = d3.max( bars.slice( 0, n - 1 ), d => d[ 1 ]);
     const isOtherLong = ( n > 1 ) && ( bars[ n - 1 ][ 0 ] === "Other" ) && ( bars[ n - 1 ][ 1 ] > k * maxLength );
