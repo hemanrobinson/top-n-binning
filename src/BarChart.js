@@ -111,7 +111,7 @@ const BarChart = ( props ) => {
  *
  * @const {number}
  */
-BarChart.otherLength = 1.3;
+BarChart.otherPercent = 1.3;
 
 /**
  * Draws the bar chart.
@@ -139,23 +139,26 @@ BarChart.draw = ( ref, width, height, margin, padding, isZooming, isXBinning, is
     svg.selectAll( "*" ).remove();
 
     // If the "Other" bar is long, shorten it.
-    let newBars = bars.concat();
-    let yScale1 = yScale;
-    const k = BarChart.otherLength;
-    const n = bars.length;
-    let maxLength = d3.max( bars.slice( 0, n - 1 ), d => d[ 1 ]);
-    const isOtherLong = ( n > 1 ) && ( bars[ n - 1 ][ 0 ] === "Other" ) && ( bars[ n - 1 ][ 1 ] > k * maxLength );
+    let yScale1 = yScale,
+        otherLength;
+    const n = bars.length,
+        maxLength = d3.max( bars.slice( 0, n - 1 ), d => d[ 1 ]),
+        isOtherLong = ( n > 1 ) && ( bars[ n - 1 ][ 0 ] === "Other" ) && ( bars[ n - 1 ][ 1 ] > BarChart.otherPercent * maxLength );
     if( isOtherLong ) {
-        newBars[ n - 1 ][ 1 ] = k * maxLength;
-        let yDomain1 = [ 0, 1.05 * d3.max( newBars, d => d[ 1 ])];     // a 5% margin
+        
+        // Save the "Other" bar length.
+        otherLength = bars[ n - 1 ][ 1 ];
+        
+        // Shorten the "Other" bar.
+        bars[ n - 1 ][ 1 ] = BarChart.otherPercent * maxLength;
         yScale1 = d3.scaleLinear()
-            .domain( yDomain1 )
+            .domain([ 0, 1.05 * bars[ n - 1 ][ 1 ]])            // a 5% margin
             .range([ height - margin.bottom - padding.bottom, margin.top + padding.top ]);
     }
     
     // Draw the bars.
     svg.selectAll( "rect" )
-        .data( newBars )
+        .data( bars )
         .enter()
         .append( "rect" )
         .attr( "x", ( d ) => xScale( d[ 0 ]))
@@ -178,17 +181,15 @@ BarChart.draw = ( ref, width, height, margin, padding, isZooming, isXBinning, is
             .attr( "width", margin.left )
             .attr( "height", y - margin.top - padding.top )
             .style( "fill", colorLight );
-    
+            
         // Draw the second Y axis.
-        let yDomain2 = yDomain0.concat();
-        yDomain2[ 0 ] = yDomain2[ 1 ] * ( height - y ) / ( height - margin.bottom - padding.bottom - margin.top - padding.top );
         let yScale2 = d3.scaleLinear()
-            .domain( yDomain2 )
+            .domain([ 1.05 * maxLength, 1.05 * otherLength ])   // a 5% margin
             .range([ y, margin.top + padding.top ]);
         svg.append( "g" )
             .attr( "class", "axis" )
             .attr( "transform", "translate( " + margin.left + ", 0 )" )
-            .call( d3.axisLeft( yScale2 ).ticks( 3 ));
+            .call( d3.axisLeft( yScale2 ).ticks( 2 ));
         
         // Draw the breaks.
         let breakWidth = 30,
@@ -220,7 +221,12 @@ BarChart.draw = ( ref, width, height, margin, padding, isZooming, isXBinning, is
             .attr( "width", breakWidth )
             .attr( "height", d - 2 )
             .style( "fill", "#ffffff" );
+    
+        // Restore the "Other" bar length.
+        bars[ n - 1 ][ 1 ] = otherLength;
     }
+    
+    // Draw the controls.
     Graph.drawControls( ref, width, height, margin, padding, isZooming, isXBinning, isYBinning, xScale, yScale1, xDomain0, yDomain0, xLabel, yLabel );
 };
 
