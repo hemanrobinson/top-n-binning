@@ -63,7 +63,7 @@ const BarChart = ( props ) => {
     xScale.domain( xDomain0 );
 
     // Get the Y scale.
-    yDomain0 = [ 0, 1.05 * d3.max( bars, d => d[ 1 ])];     // a 5% margin
+    yDomain0 = [ 0, ( 1 + BarChart.yMargin ) * d3.max( bars, d => d[ 1 ])];
     yScale = d3.scaleLinear()
         .domain( yDomain0 )
         .range([ height - margin.bottom - padding.bottom, margin.top + padding.top ]);
@@ -105,6 +105,13 @@ const BarChart = ( props ) => {
     return <Graph width={width} height={height} margin={margin} padding={padding}
         onZoom={onZoom2D} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onMouseOver={onMouseOver} onMouseOut={onMouseOut}  onXAggregate={onXAggregate} ref={ref} />
 };
+
+/**
+ * Y axis margin, as a percentage between 0 and 1.
+ *
+ * @const {number}
+ */
+BarChart.yMargin = 0.05;
 
 /**
  * Length of "Other" bar, as a percentage of maximum bar length, >1.
@@ -152,7 +159,7 @@ BarChart.draw = ( ref, width, height, margin, padding, isZooming, isXBinning, is
         // Shorten the "Other" bar.
         bars[ n - 1 ][ 1 ] = BarChart.otherPercent * maxLength;
         yScale1 = d3.scaleLinear()
-            .domain([ 0, 1.05 * bars[ n - 1 ][ 1 ]])            // a 5% margin
+            .domain([ 0, ( 1 + BarChart.yMargin ) * bars[ n - 1 ][ 1 ]])
             .range([ height - margin.bottom - padding.bottom, margin.top + padding.top ]);
     }
     
@@ -184,7 +191,7 @@ BarChart.draw = ( ref, width, height, margin, padding, isZooming, isXBinning, is
             
         // Draw the second Y axis.
         let yScale2 = d3.scaleLinear()
-            .domain([ 1.05 * maxLength, 1.05 * otherLength ])   // a 5% margin
+            .domain([( 1 + BarChart.yMargin ) * maxLength, ( 1 + BarChart.yMargin ) * otherLength ])
             .range([ y, margin.top + padding.top ]);
         svg.append( "g" )
             .attr( "class", "axis" )
