@@ -3,6 +3,9 @@ div {
     text-align: center;
     gap: 10px;
 }
+img {
+  border: 1px solid #999999;
+}
 .Description {
     text-align: left;
     max-width: 1000px;

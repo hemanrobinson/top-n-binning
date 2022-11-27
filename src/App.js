@@ -3,6 +3,7 @@ import Histogram from './Histogram';
 import BarChart from './BarChart';
 import Heatmap from './Heatmap';
 import './App.css';
+import shneiderman from './shneiderman.jpg';
 
 // Application:  Binning.
 const App = () => {
@@ -12,14 +13,15 @@ const App = () => {
         <div className="Column">
             <div className="Description">
                 <h1>Binning</h1>
+                <a title="Robert Kosara, CC0, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Ben_Shneiderman_at_UNCC.jpg"><img width="256" alt="Ben Shneiderman at UNCC" src={shneiderman}/></a>
                 <p>
-                Shneiderman taught us all to <a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1996eyes.pdf">"Overview first, zoom and filter, then details-on-demand"</a>.  Does the word "zoom" include binning?
+                Dr. Ben Shneiderman taught us all to <a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1996eyes.pdf">"Overview first, zoom and filter, then details-on-demand"</a>.
                 </p>
                 <p>
-                "Zooming" usually refers to scaling, while "binning" refers to grouping.  Both enable users to explore their data.  Particularly in aggregate graphs of large data sets, interactive binning can help us when zooming cannot.
+                Does "zoom" include binning?  In aggregate graphs, zooming the scales may not help us explore the data.  However, adjusting the bins often can.
                 </p>
                 <p>
-                To minimize distraction from the data display, controls are displayed only when needed.  Hover over the graph to see the binning controls.
+                To emphasize the data in the graphs below, controls are displayed only when needed.  Hover over the graphs to see the binning controls.
                 </p>
                 <h2>Continuous Data</h2>
                 <p>
