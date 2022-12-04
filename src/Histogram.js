@@ -63,7 +63,7 @@ const Histogram = ( props ) => {
     
     // Zooms in one dimension.
     let onMouseDown = ( event ) => {
-        Graph.onMouseDown( event, width, height, margin, padding, xScale, yScale, xDomain0, yDomain0 );
+        Graph.onMouseDown( event, width, height, margin, padding, 0, xScale, yScale, xDomain0, yDomain0 );
     },
     onMouseUp = ( event ) => {
         if( Graph.downLocation.isX || Graph.downLocation.isY ) {
@@ -74,13 +74,13 @@ const Histogram = ( props ) => {
     
     // Show or hide the controls.
     let onMouseOver = ( event ) => {
-        Graph.drawControls( ref, width, height, margin, padding, false, true, false, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel );
+        Graph.drawControls( ref, width, height, margin, padding, 0, false, false, true, false, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel );
     };
     let onMouseOut = ( event ) => {
         let xUp = event.nativeEvent.offsetX,
             yUp = event.nativeEvent.offsetY,
             isBinning = (( 0 <= xUp ) && ( xUp < width ) && ( 0 <= yUp ) && ( yUp < height ));
-        Graph.drawControls( ref, width, height, margin, padding, false, isBinning, false, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel );
+        Graph.drawControls( ref, width, height, margin, padding, 0, false, false, isBinning, false, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel );
     };
     
     // Set hook to draw on mounting or any state change.
@@ -130,8 +130,8 @@ Histogram.draw = ( ref, width, height, margin, padding, isZooming, isXBinning, i
         .style( "fill", "#99bbdd" );
     
     // Draw the axes and the controls.
-    Graph.drawAxes(     ref, width, height, margin, padding, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel );
-    Graph.drawControls( ref, width, height, margin, padding, isZooming, isXBinning, isYBinning, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel );
+    Graph.drawAxes(     ref, width, height, margin, padding, 0, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel );
+    Graph.drawControls( ref, width, height, margin, padding, 0, isZooming, isZooming, isXBinning, isYBinning, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel );
 };
 
 export default Histogram;

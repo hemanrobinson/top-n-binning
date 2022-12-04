@@ -270,12 +270,13 @@ Graph.onZoom2D = ( isIn, xScale, yScale, xDomain0, yDomain0, isX, isY ) => {
  * @param  {number}   height    height, in pixels
  * @param  {Box}      margin    margin
  * @param  {Box}      padding   padding
+ * @param  {number}   xScrollSize scroll size in the X dimension, or 0 for default
  * @param  {D3Scale}  xScale    X scale
  * @param  {D3Scale}  yScale    Y scale
  * @param  {Array}    xDomain0  Initial X domain
  * @param  {Array}    yDomain0  Initial Y domain
  */
-Graph.onMouseDown = ( event, width, height, margin, padding, xScale, yScale, xDomain0, yDomain0 ) => {
+Graph.onMouseDown = ( event, width, height, margin, padding, xScrollSize, xScale, yScale, xDomain0, yDomain0 ) => {
 
     // Initialization.
     const scrollSize = Graph.scrollSize,
@@ -304,7 +305,7 @@ Graph.onMouseDown = ( event, width, height, margin, padding, xScale, yScale, xDo
     Graph.downLocation.isMax = false;
     
     // Handle event on X scrollbar...
-    if(( left <= xDown ) && ( xDown <= width - right ) && ( height - scrollSize <= yDown ) && ( yDown <= height )) {
+    if(( left <= xDown ) && ( xDown <= width - right ) && ( height - ( xScrollSize ? xScrollSize : scrollSize ) <= yDown ) && ( yDown <= height )) {
         let w = width - right - left + 1,
             x0 = left + w * ( xMin - xMin0      ) / ( xMax0 - xMin0 + xD ),
             x1 = left + w * ( xMax - xMin0 + xD ) / ( xMax0 - xMin0 + xD );
@@ -499,6 +500,7 @@ Graph.onMouseUp = ( ref, event, width, height, margin, padding, xScale, yScale, 
  * @param  {number}   height      height, in pixels
  * @param  {Box}      margin      margin
  * @param  {Box}      padding     padding
+ * @param  {number}   xScrollSize scroll size in the X dimension, or 0 for default
  * @param  {D3Scale}  xScale      X scale
  * @param  {D3Scale}  yScale      Y scale
  * @param  {Array}    xDomain0    Initial X domain
@@ -506,7 +508,7 @@ Graph.onMouseUp = ( ref, event, width, height, margin, padding, xScale, yScale, 
  * @param  {string}   xLabel      X axis label
  * @param  {string}   yLabel      Y axis label
  */
-Graph.drawAxes = ( ref, width, height, margin, padding, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel ) => {
+Graph.drawAxes = ( ref, width, height, margin, padding, xScrollSize, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel ) => {
     
     // Initialization.
     const svg = d3.select( ref.current.childNodes[ 0 ]),
@@ -524,7 +526,7 @@ Graph.drawAxes = ( ref, width, height, margin, padding, xScale, yScale, xDomain0
         .attr( "x", width - padding.right )
         .attr( "y", 0 )
         .attr( "width", padding.right )
-        .attr( "height", height )
+        .attr( "height", height + xScrollSize )
         .style( "fill", colorLight );
     svg.append( "rect" )
         .attr( "x", 0 )
@@ -536,14 +538,14 @@ Graph.drawAxes = ( ref, width, height, margin, padding, xScale, yScale, xDomain0
         .attr( "x", 0 )
         .attr( "y", 0 )
         .attr( "width", margin.left )
-        .attr( "height", height )
+        .attr( "height", height + xScrollSize )
         .style( "fill", colorLight );
     
     // Draw the X axis.
     svg.append( "g" )
         .attr( "class", ( margin.bottom > 50 ) ? "axisRotated" : "axis" )
         .attr( "transform", "translate( 0, " + ( height - margin.bottom ) + " )" )
-        .call( d3.axisBottom( xScale ).ticks( 3 ));
+        .call( d3.axisBottom( xScale ).ticks( 3 ).tickFormat( t => ( "" + t )));
     svg.append( "text" )
         .attr( "transform", "translate( " + ( width / 2 ) + " ," + ( height - 1.5 * scrollSize ) + ")" )
         .style( "text-anchor", "middle" )
@@ -553,7 +555,7 @@ Graph.drawAxes = ( ref, width, height, margin, padding, xScale, yScale, xDomain0
     svg.append( "g" )
         .attr( "class", "axis" )
         .attr( "transform", "translate( " + margin.left + ", 0 )" )
-        .call( d3.axisLeft( yScale ).ticks( 3 ));
+        .call( d3.axisLeft( yScale ).ticks( 3 ).tickFormat( t => ( "" + t )));
     svg.append( "text" )
         .attr( "x", margin.left )
         .attr( "y", margin.top + padding.top * 0.7 )
@@ -569,7 +571,9 @@ Graph.drawAxes = ( ref, width, height, margin, padding, xScale, yScale, xDomain0
  * @param  {number}   height      height, in pixels
  * @param  {Box}      margin      margin
  * @param  {Box}      padding     padding
- * @param  {boolean}  isZooming   true iff this graph can be zoomed
+ * @param  {number}   xScrollSize scroll size in the X dimension, or 0 for default
+ * @param  {boolean}  isXZooming  true iff this graph can be zoomed in the X dimension
+ * @param  {boolean}  isYZooming  true iff this graph can be zoomed in the Y dimension
  * @param  {boolean}  isXBinning  true iff this graph can be binned in the X dimension
  * @param  {boolean}  isYBinning  true iff this graph can be binned in the Y dimension
  * @param  {D3Scale}  xScale      X scale
@@ -579,7 +583,7 @@ Graph.drawAxes = ( ref, width, height, margin, padding, xScale, yScale, xDomain0
  * @param  {string}   xLabel      X axis label
  * @param  {string}   yLabel      Y axis label
  */
-Graph.drawControls = ( ref, width, height, margin, padding, isZooming, isXBinning, isYBinning, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel ) => {
+Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, isXZooming, isYZooming, isXBinning, isYBinning, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel ) => {
     
     // Initialization.
     const svg = d3.select( ref.current.childNodes[ 0 ]),
@@ -595,80 +599,130 @@ Graph.drawControls = ( ref, width, height, margin, padding, isZooming, isXBinnin
         w = width - margin.right - padding.right - x + 1,
         y = margin.top + padding.top,
         h = height - margin.bottom - padding.bottom - y + 1;
-    
-    // Draw the scrollbars...
-    if( isZooming ) {
-    
-        // Draw the X scrollbar.
-        let x1 = x + w * ( xMin - xMin0      ) / ( xMax0 - xMin0 + xD ),
-            x2 = x + w * ( xMax - xMin0 + xD ) / ( xMax0 - xMin0 + xD );
+        
+    // Draw the X scroll bar.
+    let x1 = x + w * ( xMin - xMin0      ) / ( xMax0 - xMin0 + xD ),
+        x2 = x + w * ( xMax - xMin0 + xD ) / ( xMax0 - xMin0 + xD );
+    if( xScrollSize ) {
         svg.append( "rect" )
-            .attr( "x", x )
-            .attr( "y", height - scrollSize )
-            .attr( "width", w )
-            .attr( "height", scrollSize )
-            .style( "fill", "#ffffff" );
-        svg.append( "line" )
-            .attr( "x1", x1 + halfSize )
-            .attr( "y1", height - halfSize )
-            .attr( "x2", x2 - halfSize )
-            .attr( "y2", height - halfSize )
-            .style( "stroke-width", scrollSize )
-            .style( "stroke", colorDark )
-            .style( "stroke-linecap", "round" );
-        svg.append( "line" )
-            .attr( "x1", x1 + halfSize + 1 )
-            .attr( "y1", height - halfSize )
-            .attr( "x2", x2 - halfSize - 1 )
-            .attr( "y2", height - halfSize )
-            .style( "stroke-width", scrollSize )
-            .style( "stroke", "#ffffff" )
-            .style( "stroke-linecap", "butt" );
-        svg.append( "line" )
-            .attr( "x1", x1 + halfSize + 2 )
-            .attr( "y1", height - halfSize )
-            .attr( "x2", x2 - halfSize - 2 )
-            .attr( "y2", height - halfSize )
-            .style( "stroke-width", scrollSize )
-            .style( "stroke", colorLine )
-            .style( "stroke-linecap", "butt" );
+            .attr( "x", x1 )
+            .attr( "y", height - xScrollSize )
+            .attr( "width", x2 - x1 )
+            .attr( "height", xScrollSize )
+            .attr( "opacity","0.4" )
+            .style( "fill", colorDark );
+     }
+    
+    // Draw the X zoombar...
+    const d = halfSize / 2,
+        k = scrollSize / 4;
+    if( isXZooming ) {
+        
+        // Draw a traditional scrollbar...
+        if( !xScrollSize ) {
+            svg.append( "rect" )
+                .attr( "x", x )
+                .attr( "y", height - scrollSize )
+                .attr( "width", w )
+                .attr( "height", scrollSize )
+                .style( "fill", "#ffffff" );
+            svg.append( "line" )
+                .attr( "x1", x1 + halfSize )
+                .attr( "y1", height - halfSize )
+                .attr( "x2", x2 - halfSize )
+                .attr( "y2", height - halfSize )
+                .style( "stroke-width", scrollSize )
+                .style( "stroke", colorDark )
+                .style( "stroke-linecap", "round" );
+            svg.append( "line" )
+                .attr( "x1", x1 + halfSize + 1 )
+                .attr( "y1", height - halfSize )
+                .attr( "x2", x2 - halfSize - 1 )
+                .attr( "y2", height - halfSize )
+                .style( "stroke-width", scrollSize )
+                .style( "stroke", "#ffffff" )
+                .style( "stroke-linecap", "butt" );
+            svg.append( "line" )
+                .attr( "x1", x1 + halfSize + 2 )
+                .attr( "y1", height - halfSize )
+                .attr( "x2", x2 - halfSize - 2 )
+                .attr( "y2", height - halfSize )
+                .style( "stroke-width", scrollSize )
+                .style( "stroke", colorLine )
+                .style( "stroke-linecap", "butt" );
+        }
+        
+        // ...or an overview scrollbar.
+        else {
+            svg.append( "line" )
+                .attr( "x1", x1 + halfSize + 1 )
+                .attr( "y1", height - xScrollSize )
+                .attr( "x2", x1 + halfSize + 1 )
+                .attr( "y2", height )
+                .attr( "opacity","0.5" )
+                .style( "stroke-width", 1 )
+                .style( "stroke", "#ffffff" )
+                .style( "stroke-linecap", "butt" );
+            svg.append( "line" )
+                .attr( "x1", x2 - halfSize - 1 )
+                .attr( "y1", height - xScrollSize )
+                .attr( "x2", x2 - halfSize - 1 )
+                .attr( "y2", height )
+                .attr( "opacity","0.5" )
+                .style( "stroke-width", 1 )
+                .style( "stroke", "#ffffff" )
+                .style( "stroke-linecap", "butt" );
+        }
             
         // Draw the X drag handles.
-        const d = halfSize / 2,
-            k = scrollSize / 4;
+        let y1 = xScrollSize ? height - xScrollSize / 2 + k : height - scrollSize + k;
+        let y2 = xScrollSize ? height - xScrollSize / 2 - k : height - k;
         svg.append( "line" )
             .attr( "x1", x1 + d )
-            .attr( "y1", height - scrollSize + k )
+            .attr( "y1", y1 )
             .attr( "x2", x1 + d )
-            .attr( "y2", height - k )
+            .attr( "y2", y2 )
             .style( "stroke-width", 1 )
             .style( "stroke", "#000000" )
             .style( "stroke-linecap", "butt" );
         svg.append( "line" )
             .attr( "x1", x1 + d + 2 )
-            .attr( "y1", height - scrollSize + k )
+            .attr( "y1", y1 )
             .attr( "x2", x1 + d + 2 )
-            .attr( "y2", height - k )
+            .attr( "y2", y2 )
             .style( "stroke-width", 1 )
             .style( "stroke", "#000000" )
             .style( "stroke-linecap", "butt" );
         svg.append( "line" )
             .attr( "x1", x2 - d )
-            .attr( "y1", height - scrollSize + k )
+            .attr( "y1", y1 )
             .attr( "x2", x2 - d )
-            .attr( "y2", height - k )
+            .attr( "y2", y2 )
             .style( "stroke-width", 1 )
             .style( "stroke", "#000000" )
             .style( "stroke-linecap", "butt" );
         svg.append( "line" )
             .attr( "x1", x2 - d - 2 )
-            .attr( "y1", height - scrollSize + k )
+            .attr( "y1", y1 )
             .attr( "x2", x2 - d - 2 )
-            .attr( "y2", height - k )
+            .attr( "y2", y2 )
             .style( "stroke-width", 1 )
             .style( "stroke", "#000000" )
             .style( "stroke-linecap", "butt" );
-
+    }
+    
+    // ...or hide the X zoombar.
+    else if( !xScrollSize ) {
+        svg.append( "rect" )
+            .attr( "x", x )
+            .attr( "y", height - scrollSize )
+            .attr( "width", w )
+            .attr( "height", scrollSize )
+            .style( "fill", colorLight );
+    }
+    
+    // Draw the Y zoombar...
+    if( isYZooming ) {
         
         // Draw the Y scrollbar.
         let y1 = y + h * ( 1 - ( yMin - yMin0      ) / ( yMax0 - yMin0 + yD )),
@@ -739,14 +793,8 @@ Graph.drawControls = ( ref, width, height, margin, padding, isZooming, isXBinnin
             .style( "stroke-linecap", "butt" );
     }
     
-    // ...or hide the scrollbars.
+    // ...or hide the Y zoombar.
     else {
-        svg.append( "rect" )
-            .attr( "x", x )
-            .attr( "y", height - scrollSize )
-            .attr( "width", w )
-            .attr( "height", scrollSize )
-            .style( "fill", colorLight );
         svg.append( "rect" )
             .attr( "x", 0 )
             .attr( "y", y )
@@ -756,9 +804,9 @@ Graph.drawControls = ( ref, width, height, margin, padding, isZooming, isXBinnin
     }
 
     // Show or hide the buttons and sliders.
-    if( isZooming !== Graph.isZooming( ref )) {
+    if(( isXZooming || isYZooming ) !== Graph.isZooming( ref )) {
         for( let i = 1; ( i < 3 ); i++ ) {
-            ref.current.childNodes[ i ].style.display = ( isZooming ? "inline" : "none" );
+            ref.current.childNodes[ i ].style.display = (( isXZooming || isYZooming ) ? "inline" : "none" );
         }
     }
     if( isXBinning !== Graph.isXBinning( ref )) {

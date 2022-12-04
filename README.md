@@ -1,4 +1,4 @@
-# Dynamic Binning
+# Better Binning
 
 Binning (adjusting ranges or categories) is distinct from zooming (adjusting scales). With independent, interactive controls, both binning and zooming enable users to explore their data.
 
