@@ -77,8 +77,8 @@ it( "zooms in two dimensions", () => {
     let xScale = d3.scaleLinear().domain([ 0, 1 ]).range([ 0, 100 ]),
         yScale = d3.scaleLinear().domain([ 0, 1 ]).range([ 0, 100 ]);
     Graph.onZoom2D( true, xScale, yScale, [ 0, 1 ], [ 0, 1 ], true, true );
-    expect( xScale.domain()).toEqual([ 0.125, 0.890625 ]);
-    expect( yScale.domain()).toEqual([ 0.125, 0.890625 ]);
+    expect( xScale.domain()).toEqual([ 0.125, 0.875 ]);
+    expect( yScale.domain()).toEqual([ 0.125, 0.875 ]);
     Graph.onZoom2D( false, xScale, yScale, [ 0, 1 ], [ 0, 1 ], true, true );
     expect( xScale.domain()).toEqual([ 0, 1 ]);
     expect( yScale.domain()).toEqual([ 0, 1 ]);

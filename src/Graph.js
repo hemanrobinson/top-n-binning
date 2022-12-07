@@ -197,10 +197,11 @@ Graph.onZoom2D = ( isIn, xScale, yScale, xDomain0, yDomain0, isX, isY ) => {
         
     // Calculate scales for zoom in...
     if( isIn ) {
-        xMin = Math.min( xMin0 + ( xMax0 - xMin0 + xD ) * f, xMin + ( xMax - xMin + xD ) / d );
-        xMax = Math.max( xMax0 - ( xMax0 - xMin0 + xD ) * f, xMax - ( xMax - xMin + xD ) / d );
-        yMin = Math.min( yMin0 + ( yMax0 - yMin0 + yD ) * f, yMin + ( yMax - yMin + yD ) / d );
-        yMax = Math.max( yMax0 - ( yMax0 - yMin0 + yD ) * f, yMax - ( yMax - yMin + yD ) / d );
+        const xDif = xMax - xMin, yDif = yMax - yMin;
+        xMin = Math.min( xMin0 + ( xMax0 - xMin0 + xD ) * f, xMin + ( xDif + xD ) / d );
+        xMax = Math.max( xMax0 - ( xMax0 - xMin0 + xD ) * f, xMax - ( xDif + xD ) / d );
+        yMin = Math.min( yMin0 + ( yMax0 - yMin0 + yD ) * f, yMin + ( yDif + yD ) / d );
+        yMax = Math.max( yMax0 - ( yMax0 - yMin0 + yD ) * f, yMax - ( yDif + yD ) / d );
         if( xScale.bandwidth ) {
             xMin = Math.ceil( xMin );
             xMax = Math.floor( xMax );
