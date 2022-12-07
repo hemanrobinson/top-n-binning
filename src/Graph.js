@@ -591,7 +591,6 @@ Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, isXZoom
         scrollSize = Graph.scrollSize,
         halfSize = scrollSize / 2,
         colorLight = "#ebeeef",
-        colorDark = "#b1b7bb",
         colorLine = "#cbd2d7";
     let xDomain = xScale.domain(),
         yDomain = yScale.domain(),
@@ -610,8 +609,8 @@ Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, isXZoom
             .attr( "y", height - xScrollSize )
             .attr( "width", x2 - x1 )
             .attr( "height", xScrollSize )
-            .attr( "opacity","0.4" )
-            .style( "fill", colorDark );
+            .attr( "opacity","0.5" )
+            .style( "fill", colorLine );
      }
     
     // Draw the X zoombar...
@@ -633,7 +632,7 @@ Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, isXZoom
                 .attr( "x2", x2 - halfSize )
                 .attr( "y2", height - halfSize )
                 .style( "stroke-width", scrollSize )
-                .style( "stroke", colorDark )
+                .style( "stroke", colorLine )
                 .style( "stroke-linecap", "round" );
             svg.append( "line" )
                 .attr( "x1", x1 + halfSize + 1 )
@@ -740,7 +739,7 @@ Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, isXZoom
             .attr( "x2", halfSize )
             .attr( "y2", y1 - halfSize )
             .style( "stroke-width", scrollSize )
-            .style( "stroke", colorDark )
+            .style( "stroke", colorLine )
             .style( "stroke-linecap", "round" );
         svg.append( "line" )
             .attr( "x1", halfSize )
