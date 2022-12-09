@@ -21,7 +21,7 @@ const App = () => {
                 Does "zoom" include binning?  In aggregate graphs, zooming the scales may not help us explore the data.  However, adjusting the bins often can.
                 </p>
                 <p>
-                To emphasize the data in the graphs below, controls are displayed only when needed.  Hover over the graphs to see the binning controls.
+                Hover over the graphs to see the binning controls.
                 </p>
                 <h2>Continuous Data</h2>
                 <p>
@@ -53,7 +53,10 @@ const App = () => {
                 <Heatmap dataSet={ "Food" } />
             </div>
             <div className="Description">
-                <h2>About This User Interface</h2>
+                <h2>About this Design</h2>
+                <p>
+                To minimize distraction from the data display, controls are displayed only when they can be used.
+                </p>
                 <p>
                 There are three locations where binning controls might be placed:  inside the graph, outside the graph, or along the axes.
                 </p>
@@ -61,7 +64,7 @@ const App = () => {
                 The first location, inside the graph, can be implemented with a hand or "grabber" cursor.  A cursor does not interfere with the data display, but usability tests showed that this was difficult to learn.  This may be because a cursor displays only a few pixels, so can easily be missed, or because manipulating a data display is an unfamiliar action.
                 </p>
                 <p>
-                The second location, outside the graph, is easy to learn.  Controls can be more visible and labeled, such as a slider or entry field labeled "Bin Width".  However, a location outside the graph requires either additional screen real estate, which may not be available; or placement in a  dialog, which is less efficient for the user.
+                The second location, outside the graph, is easy to learn.  Controls can be more visible and labeled, such as a slider or entry field labeled "Bin Width".  However, a location outside the graph requires either additional screen real estate, which may not be available; or placement in a dialog, which is less efficient for the user.
                 </p>
                 <p>
                 The third location, along the axis, is less prominent than the second; but manipulating a slider is a familiar action so is still easily learned.
