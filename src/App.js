@@ -21,7 +21,7 @@ const App = () => {
                 Does "zooming" include binning?  In aggregate graphs, adjusting scales may not help us explore the data.  However, adjusting bins often can.
                 </p>
                 <p>
-                Hover over the graphs below to see the binning controls.
+                Hover over the graphs below to see the binning controls.  Use the sliders to adjust the bins.
                 </p>
                 <h2>Continuous Data</h2>
                 <p>
