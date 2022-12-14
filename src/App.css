@@ -20,3 +20,7 @@ img {
     grid-template-columns: repeat( 1, 1fr );
     justify-items: center;
 }
+.MuiSlider-rail,
+.MuiSlider-track {
+    height: 3px !important;
+}

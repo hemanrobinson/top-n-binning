@@ -36,7 +36,7 @@ const Histogram = ( props ) => {
     xScale = d3.scaleLinear().domain( xDomain ).range([ margin.left + padding.left, width - margin.right - padding.right ]);
     
     // Assign the X aggregate factor.
-    const [ xAggregate, setXAggregate ] = useState( 0 );
+    const [ xAggregate, setXAggregate ] = useState( 0.5 );
     let onXAggregate = ( event, value ) => {
         setXDomain( xScale.domain());
         setXAggregate( value );
@@ -46,7 +46,7 @@ const Histogram = ( props ) => {
     histogram = d3.histogram()
         .value( d => d[ 2 ])
         .domain( xDomain0 )
-        .thresholds( Math.round( 8 + Math.exp( 5 * xAggregate )));
+        .thresholds( Math.round( Math.exp( 4 * xAggregate )));
     bins = histogram( data );
 
     // Get the Y scale.
@@ -90,7 +90,7 @@ const Histogram = ( props ) => {
     
     // Return the component.
     return <Graph width={width} height={height} margin={margin} padding={padding}
-        onZoom={onZoom2D} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onMouseOver={onMouseOver} onMouseOut={onMouseOut} onXAggregate={onXAggregate} ref={ref} />
+        onZoom={onZoom2D} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onMouseOver={onMouseOver} onMouseOut={onMouseOut} xAggregate={0.5} onXAggregate={onXAggregate} ref={ref} />
 };
 
 /**
