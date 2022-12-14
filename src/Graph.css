@@ -23,6 +23,14 @@ button, .MuiSlider-root {
     position: absolute;
     z-index: 2;
 }
+.sliderHorz .MuiSlider-rail,
+.sliderHorz .MuiSlider-track {
+    height: 3px !important;
+}
+.sliderVert .MuiSlider-rail,
+.sliderVert .MuiSlider-track {
+    width: 3px !important;
+}
 
 /* Axis */
 .axis path,

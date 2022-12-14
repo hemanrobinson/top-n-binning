@@ -80,12 +80,12 @@ const Graph = React.forwardRef(( props, ref ) => {
         <Button variant="contained" onClick={()=>onZoom(false)}
             style={{ position: "absolute", padding: 0, minWidth: buttonSize, width: buttonSize, height: buttonSize, top: ( height + 1 - buttonSize ), left: 1 + buttonSize,
             display: "none" }}>-</Button>
-        <Slider min={0} max={1} step={0.01} defaultValue={xAggregate} onChange={onXAggregate}
-            style={{ width: width - left - right + 1, top: height - margin.bottom - sliderOffset, left: left + 1, position: "absolute",
-            display: "none" }} />
-        <Slider min={0} max={1} step={0.01} defaultValue={yAggregate} onChange={onYAggregate} orientation="vertical"
-            style={{ height: height - top - bottom + 1, top: top + 1, left: margin.left - sliderOffset - 1, position: "absolute",
-            display: "none" }} />
+        <Slider min={0} max={1} step={0.01}
+            defaultValue={xAggregate} onChange={onXAggregate} className="sliderHorz"
+            style={{ width: width - left - right + 1, top: height - margin.bottom - sliderOffset, left: left + 1, position: "absolute", display: "none" }} />
+        <Slider min={0} max={1} step={0.01}
+            defaultValue={yAggregate} onChange={onYAggregate} className="sliderVert"  orientation="vertical"
+            style={{ height: height - top - bottom + 1, top: top + 1, left: margin.left - sliderOffset - 1, position: "absolute", display: "none" }} />
     </div>;
 });
 
