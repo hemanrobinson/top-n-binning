@@ -5,14 +5,14 @@ import Heatmap from './Heatmap';
 import './App.css';
 import shneiderman from './shneiderman.jpg';
 
-// Application:  Dynamic Binning.
+// Application:  Dynamic Binning
 const App = () => {
     
     // Return the App.
     return (
         <div className="Column">
             <div className="Description">
-                <h1>Better Binning</h1>
+                <h1>Dynamic Binning</h1>
                 <p>
                 Dr. Ben Shneiderman taught us all to <a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1996eyes.pdf">"Overview first, zoom and filter, then details-on-demand"</a>.
                 </p>
