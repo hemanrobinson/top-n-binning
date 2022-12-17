@@ -14,7 +14,7 @@ const App = () => {
             <div className="Description">
                 <h1>Dynamic Binning</h1>
                 <p>
-                Dr. Ben Shneiderman taught us all to <a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1996eyes.pdf">"Overview first, zoom and filter, then details-on-demand"</a>.
+                Ben Shneiderman taught us all to <a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1996eyes.pdf">"Overview first, zoom and filter, then details-on-demand"</a>.
                 </p>
                 <a title="Robert Kosara, CC0, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Ben_Shneiderman_at_UNCC.jpg"><img width="256" alt="Ben Shneiderman at UNCC" src={shneiderman}/></a>
                 <p>
