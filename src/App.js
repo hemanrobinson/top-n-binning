@@ -61,7 +61,7 @@ const App = () => {
                 To minimize distraction from the data display, controls are displayed only when they can be used.
                 </p>
                 <p>
-                An alternative design using a hand ("grabber") cursor directly on the data display was considered, but usability tests showed that the slider control is easier to learn.  The slider is positioned along the axis to conserve screen real estate and to enable direct manipulation of the axis ticks.  
+                An alternative design using a hand ("grabber") cursor on the data display was considered, but usability tests showed the slider control is easier to learn.  The slider is positioned along the axis to afford direct manipulation of that dimension and to conserve screen real estate.
                 </p>
             </div>
             <a href="https://github.com/hemanrobinson/zoom/">Code Shared on GitHub</a>
