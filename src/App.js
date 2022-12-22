@@ -3,7 +3,7 @@ import Histogram from './Histogram';
 import BarChart from './BarChart';
 import Heatmap from './Heatmap';
 import './App.css';
-import shneiderman from './shneiderman.jpg';
+import shneiderman from './shneiderman.png';
 
 // Application:  Dynamic Binning
 const App = () => {
@@ -14,9 +14,9 @@ const App = () => {
             <div className="Description">
                 <h1>Dynamic Binning</h1>
                 <p>
-                Ben Shneiderman taught us all to <a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1996eyes.pdf">"Overview first, zoom and filter, then details-on-demand"</a>.
+                <a href="https://www.cs.umd.edu/users/ben/">Ben Shneiderman</a> taught us all to <a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1996eyes.pdf">"Overview first, zoom and filter, then details-on-demand"</a>.
                 </p>
-                <a title="Robert Kosara, CC0, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Ben_Shneiderman_at_UNCC.jpg"><img width="256" alt="Ben Shneiderman at UNCC" src={shneiderman}/></a>
+                <a href="https://www.cs.umd.edu/users/ben/"><img alt="Dr. Ben Shneiderman" src={shneiderman}/></a>
                 <p>
                 Does "zooming" include binning?  In aggregate graphs, adjusting scales may not help us explore the data.  However, adjusting bins often can.
                 </p>
