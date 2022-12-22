@@ -46,7 +46,7 @@ const Histogram = ( props ) => {
     histogram = d3.histogram()
         .value( d => d[ 2 ])
         .domain( xDomain0 )
-        .thresholds( Math.round( Math.exp( 4 * xAggregate )));
+        .thresholds( Math.round( Math.exp( 5 * ( 1 - xAggregate ))));
     bins = histogram( data );
 
     // Get the Y scale.

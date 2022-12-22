@@ -65,7 +65,7 @@ const Heatmap = ( props ) => {
     histogram = d3.histogram()
         .value( d => d[ 1 ])
         .domain( xDomain0 )
-        .thresholds( Math.round( Math.exp( 4 * xAggregate )));
+        .thresholds( Math.round( Math.exp( 5 * ( 1 - xAggregate ))));
     bins = histogram( data );
     
     // Count the number of values in each tile.

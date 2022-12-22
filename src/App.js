@@ -61,16 +61,7 @@ const App = () => {
                 To minimize distraction from the data display, controls are displayed only when they can be used.
                 </p>
                 <p>
-                There are three locations where binning controls might be placed:  inside the graph, outside the graph, or along the axes.
-                </p>
-                <p>
-                The first location, inside the graph, can be implemented with a hand or "grabber" cursor.  A cursor does not interfere with the data display, but usability tests showed that this was difficult to learn.  This may be because a cursor displays only a few pixels, so can easily be missed.
-                </p>
-                <p>
-                The second location, outside the graph, is easy to learn.  Controls can be more visible and labeled, such as a slider or entry field labeled "Bin Width".  However, a location outside the graph requires additional screen real estate, which may not be available; or placement in a dialog, which is less efficient for the user.
-                </p>
-                <p>
-                The third location, along the axis, is less prominent than the second; but manipulating a slider is a familiar action so is still easily learned.
+                An alternative design using a hand ("grabber") cursor directly on the data display was considered, but usability tests showed that the slider control is easier to learn.  The slider is positioned along the axis to conserve screen real estate and to enable direct manipulation of the axis ticks.  
                 </p>
             </div>
             <a href="https://github.com/hemanrobinson/zoom/">Code Shared on GitHub</a>
