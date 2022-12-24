@@ -20,7 +20,7 @@ const Heatmap = ( props ) => {
     const width = 400,
         height = 650,
         padding = { top: 20, right: 20, bottom: 10, left: 10 },
-        margin = { top: 0, right: 0, bottom: 50, left: 80 },
+        margin = { top: 0, right: 0, bottom: 50, left: 140 },
         top    = margin.top    + padding.top,
         right  = margin.right  + padding.right,
         bottom = margin.bottom + padding.bottom,
@@ -46,8 +46,8 @@ const Heatmap = ( props ) => {
     
     // Get the unique Y values.
     let values = Array.from( d3.rollup( data, v => v.length, d => d[ yIndex ]));
-    values.sort(( a, b ) => ( b[ 1 ] - a[ 1 ]));
-    yDomain0 = values.map( x => x[ yIndex ]);
+    values.sort(( a, b ) => ( b[ 0 ] - a[ 0 ]));
+    yDomain0 = values.map( x => x[ 0 ]);
         
     // Get the Y scale.
     const [ yDomain, setYDomain ] = useState( yDomain0 );
@@ -69,7 +69,7 @@ const Heatmap = ( props ) => {
 
     // Calculate the X bins.
     histogram = d3.histogram()
-        .value( d => d[ 1 ])
+        .value( d => d[ xIndex ])
         .domain( xDomain0 )
         .thresholds( Math.round( Math.exp( 5 * ( 1 - xAggregate ))));
     bins = histogram( data );

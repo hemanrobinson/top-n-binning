@@ -25,16 +25,19 @@ const App = () => {
                 </p>
                 <h2>Continuous Data</h2>
                 <p>
-                For continuous data sets, a slider control on the axis affords adjustment of the bins.  In the histogram below, for example, there is one prominent peak at the center of the distribution.  Decreasing the bin size reveals a second peak on the right.
+                For continuous data sets, there are multiple algorithms for determining bin widths.  See, for example, <a href="https://observablehq.com/@jonhelfman/plot-histogram-bin-width">Jonathan Helfman's notebook.</a>  There is not always one "best" bin width.  So, it's best to let the user explore.
+                </p>
+                <p>
+                A slider control on the axis affords adjustment of the bins.  In the histogram below, larger bin widths suggest a normal distribution.  Smaller bin widths suggest a bimodal distribution.  The distribution is in fact normal and bimodal.
                 </p>
             </div>
             <div className="Graph">
-                <Histogram dataSet={ "Cytometry" } />
+                <Histogram dataSet={ "Normal" } />
             </div>
             <div className="Description">
                 <h2>Categorical Data</h2>
                 <p>
-                Categorical data presents a different problem.  When there are many categories, the smaller ones can be usefully combined into an "Other" category.  This clarifies the largest categories -- the "Top 5", "Top 10", or however many the user desires.
+                Categorical data present a different opportunity  When there are many categories, the smaller ones can be usefully combined into an "Other" category.  This clearly displays the largest categories -- the "Top 5", "Top 10", or however many the user desires.
                 </p>
                 <p>
                 "Other" bins have been used for many years.  With a modern user interface, we can make them interactively adjustable and efficient for the user.  This is particularly useful when exploring "long-tailed" distributions, as in the bar chart below.
@@ -46,11 +49,11 @@ const App = () => {
             <div className="Description">
                 <h2>Multiple Dimensions</h2>
                 <p>
-                This user interface extends readily to multiple dimensions.   The heatmap below demonstrates continuous and categorical binning in two dimensions.
+                This user interface extends readily to multiple dimensions.  The heatmap below demonstrates continuous binning on the horizontal axis and categorical binning on the vertical axis.
                 </p>
             </div>
             <div className="Graph">
-                <Heatmap dataSet={ "Food" } />
+                <Heatmap dataSet={ "Trends" } />
             </div>
             <div className="Description">
                 <h2>About this Design</h2>
@@ -61,7 +64,10 @@ const App = () => {
                 To minimize distraction from the data display, controls are displayed only when they can be used.
                 </p>
                 <p>
-                An alternative design using a hand ("grabber") cursor on the data display was considered, but usability tests showed the slider control is easier to learn.  The slider is positioned along the axis to afford direct manipulation of that dimension and to conserve screen real estate.
+                An alternative design using a hand ("grabber") cursor on the data display was considered, but usability tests showed that the slider control is easier to learn.
+                </p>
+                <p>
+                The slider is positioned along the axis to afford direct manipulation of that dimension and to conserve screen real estate.
                 </p>
             </div>
             <a href="https://github.com/hemanrobinson/zoom/">Code Shared on GitHub</a>

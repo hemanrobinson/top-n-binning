@@ -25,7 +25,7 @@ const Histogram = ( props ) => {
         left   = margin.left   + padding.left;
     let ref = useRef(),
         { dataSet } = props,
-        columnIndex = 2,
+        columnIndex = 0,
         xLabel = Data.getColumnNames( dataSet )[ columnIndex ],
         yLabel = "Frequency",
         data = Data.getValues( dataSet ),
