@@ -15,16 +15,21 @@ import './Graph.css';
 const Histogram = ( props ) => {
     
     // Initialization.
-    const width = 400,
+    const width = 650,
         height = 400,
         padding = { top: 20, right: 20, bottom: 0, left: 20 },
-        margin = { top: 0, right: 10, bottom: 50, left: 50 };
+        margin = { top: 0, right: 10, bottom: 50, left: 50 },
+        top    = margin.top    + padding.top,
+        right  = margin.right  + padding.right,
+        bottom = margin.bottom + padding.bottom,
+        left   = margin.left   + padding.left;
     let ref = useRef(),
         { dataSet } = props,
-        xLabel = Data.getColumnNames( dataSet )[ 1 ],
+        columnIndex = 2,
+        xLabel = Data.getColumnNames( dataSet )[ columnIndex ],
         yLabel = "Frequency",
         data = Data.getValues( dataSet ),
-        xDomain0 = [ d3.min( data, d => d[ 1 ]), d3.max( data, d => d[ 1 ])],
+        xDomain0 = [ d3.min( data, d => d[ columnIndex ]), d3.max( data, d => d[ columnIndex ])],
         yDomain0,
         xScale,
         yScale,
@@ -33,7 +38,7 @@ const Histogram = ( props ) => {
         
     // Get the X scale.
     const [ xDomain, setXDomain ] = useState( xDomain0 );
-    xScale = d3.scaleLinear().domain( xDomain ).range([ margin.left + padding.left, width - margin.right - padding.right ]);
+    xScale = d3.scaleLinear().domain( xDomain ).range([ left, width - right ]);
     
     // Assign the X aggregate factor.
     const [ xAggregate, setXAggregate ] = useState( 0.5 );
@@ -44,7 +49,7 @@ const Histogram = ( props ) => {
 
     // Calculate the histogram bins.
     histogram = d3.histogram()
-        .value( d => d[ 2 ])
+        .value( d => d[ columnIndex ])
         .domain( xDomain0 )
         .thresholds( Math.round( Math.exp( 5 * ( 1 - xAggregate ))));
     bins = histogram( data );
@@ -52,7 +57,7 @@ const Histogram = ( props ) => {
     // Get the Y scale.
     yDomain0 = [ 0, 1.05 * d3.max( bins, d => d.length )];      // a 5% margin
     yScale = d3.scaleLinear()
-        .range([ height - margin.bottom - padding.bottom, margin.top + padding.top ])
+        .range([ height - bottom, top ])
         .domain( yDomain0 );
         
     // Zooms in two dimensions.

@@ -20,13 +20,19 @@ const Heatmap = ( props ) => {
     const width = 400,
         height = 650,
         padding = { top: 20, right: 20, bottom: 10, left: 10 },
-        margin = { top: 0, right: 0, bottom: 50, left: 80 };
+        margin = { top: 0, right: 0, bottom: 50, left: 80 },
+        top    = margin.top    + padding.top,
+        right  = margin.right  + padding.right,
+        bottom = margin.bottom + padding.bottom,
+        left   = margin.left   + padding.left;
     let ref = useRef(),
         { dataSet } = props,
-        xLabel = Data.getColumnNames( dataSet )[ 1 ],
-        yLabel = Data.getColumnNames( dataSet )[ 0 ],
+        xIndex = 1,
+        yIndex = 0,
+        xLabel = Data.getColumnNames( dataSet )[ xIndex ],
+        yLabel = Data.getColumnNames( dataSet )[ yIndex ],
         data = Data.getValues( dataSet ),
-        xDomain0 = [ d3.min( data, d => d[ 1 ]), d3.max( data, d => d[ 1 ])],
+        xDomain0 = [ d3.min( data, d => d[ xIndex ]), d3.max( data, d => d[ xIndex ])],
         yDomain0,
         xScale,
         yScale,
@@ -36,16 +42,16 @@ const Heatmap = ( props ) => {
         
     // Get the X scale.
     const [ xDomain, setXDomain ] = useState( xDomain0 );
-    xScale = d3.scaleLinear().domain( xDomain ).range([ margin.left + padding.left, width - margin.right - padding.right ]);
+    xScale = d3.scaleLinear().domain( xDomain ).range([ left, width - right ]);
     
     // Get the unique Y values.
-    let values = Array.from( d3.rollup( data, v => v.length, d => d[ 0 ]));
+    let values = Array.from( d3.rollup( data, v => v.length, d => d[ yIndex ]));
     values.sort(( a, b ) => ( b[ 1 ] - a[ 1 ]));
-    yDomain0 = values.map( x => x[ 0 ]);
+    yDomain0 = values.map( x => x[ yIndex ]);
         
     // Get the Y scale.
     const [ yDomain, setYDomain ] = useState( yDomain0 );
-    yScale = d3.scaleBand().domain( yDomain ).range([ height - margin.bottom - padding.bottom, margin.top + padding.top ]);
+    yScale = d3.scaleBand().domain( yDomain ).range([ height - bottom, top ]);
     
     // Assign the X aggregate factor.
     const [ xAggregate, setXAggregate ] = useState( 0.5 );

@@ -20,7 +20,11 @@ const BarChart = ( props ) => {
     const width = 650,
         height = 400,
         padding = { top: 20, right: 20, bottom: 0, left: 20 },
-        margin = { top: 0, right: 0, bottom: 120, left: 50 };
+        margin = { top: 0, right: 0, bottom: 120, left: 60 },
+        top    = margin.top    + padding.top,
+        right  = margin.right  + padding.right,
+        bottom = margin.bottom + padding.bottom,
+        left   = margin.left   + padding.left;
     let ref = useRef(),
         { dataSet } = props,
         xLabel = Data.getColumnNames( dataSet )[ 0 ],
@@ -34,7 +38,7 @@ const BarChart = ( props ) => {
         
     // Get the X scale.
     const [ xDomain, setXDomain ] = useState([]);
-    xScale = d3.scaleBand().domain( xDomain ).range([ margin.left + padding.left, width - margin.right - padding.right ]).padding( 0.2 );
+    xScale = d3.scaleBand().domain( xDomain ).range([ left, width - right ]).padding( 0.2 );
     
     // Assign the X aggregate factor.
     const [ xAggregate, setXAggregate ] = useState( 0 );
@@ -44,7 +48,7 @@ const BarChart = ( props ) => {
     };
 
     // Calculate the bars.
-    bars = Array.from( d3.rollup( data, v => v.length, d => d[ 0 ]));
+    bars = Array.from( d3.rollup( data, v => d3.sum( v, d => d[ 1 ]), d => d[ 0 ]));
     bars.sort(( a, b ) => ( b[ 1 ] - a[ 1 ]));
     
     // Combine bars if requested.
@@ -66,7 +70,7 @@ const BarChart = ( props ) => {
     yDomain0 = [ 0, ( 1 + BarChart.yMargin ) * d3.max( bars, d => d[ 1 ])];
     yScale = d3.scaleLinear()
         .domain( yDomain0 )
-        .range([ height - margin.bottom - padding.bottom, margin.top + padding.top ]);
+        .range([ height - bottom, top ]);
         
     // Zoom in two dimensions.
     let onZoom2D = ( isIn ) => {
@@ -142,7 +146,11 @@ BarChart.otherPercent = 1.3;
 BarChart.draw = ( ref, width, height, margin, padding, isZooming, isXBinning, isYBinning, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel, bars ) => {
     
     // Initialization.
-    const svg = d3.select( ref.current.childNodes[ 0 ]);
+    const top  = margin.top    + padding.top,
+        right  = margin.right  + padding.right,
+        bottom = margin.bottom + padding.bottom,
+        left   = margin.left   + padding.left,
+        svg = d3.select( ref.current.childNodes[ 0 ]);
     svg.selectAll( "*" ).remove();
 
     // If the "Other" bar is long, shorten it.
@@ -160,7 +168,7 @@ BarChart.draw = ( ref, width, height, margin, padding, isZooming, isXBinning, is
         bars[ n - 1 ][ 1 ] = BarChart.otherPercent * maxLength;
         yScale1 = d3.scaleLinear()
             .domain([ 0, ( 1 + BarChart.yMargin ) * bars[ n - 1 ][ 1 ]])
-            .range([ height - margin.bottom - padding.bottom, margin.top + padding.top ]);
+            .range([ height - bottom, top ]);
     }
     
     // Draw the bars.
@@ -184,19 +192,19 @@ BarChart.draw = ( ref, width, height, margin, padding, isZooming, isXBinning, is
             colorLight = "#ebeeef";
         svg.append( "rect" )
             .attr( "x", 0 )
-            .attr( "y", margin.top + padding.top )
+            .attr( "y", top )
             .attr( "width", margin.left )
-            .attr( "height", y - margin.top - padding.top )
+            .attr( "height", y - top )
             .style( "fill", colorLight );
             
         // Draw the second Y axis.
         let yScale2 = d3.scaleLinear()
             .domain([( 1 + BarChart.yMargin ) * maxLength, ( 1 + BarChart.yMargin ) * otherLength ])
-            .range([ y, margin.top + padding.top ]);
+            .range([ y, top ]);
         svg.append( "g" )
             .attr( "class", "axis" )
             .attr( "transform", "translate( " + margin.left + ", 0 )" )
-            .call( d3.axisLeft( yScale2 ).ticks( 2 ));
+            .call( d3.axisLeft( yScale2 ).ticks( 2 ).tickFormat( t => ( "" + t )));
         
         // Draw the breaks.
         let breakWidth = 30,
@@ -214,8 +222,8 @@ BarChart.draw = ( ref, width, height, margin, padding, isZooming, isXBinning, is
             .attr( "height", d - 2 )
             .style( "fill", "#ffffff" );
         breakWidth = xScale.step();
-        const barPadding = ( width - margin.left - margin.right - padding.left - padding.right - n * breakWidth );
-        x = width - margin.right - padding.right - breakWidth - barPadding / 2;
+        const barPadding = ( width - left - right - n * breakWidth );
+        x = width - right - breakWidth - barPadding / 2;
         svg.append( "rect" )
             .attr( "x", x )
             .attr( "y", y )
