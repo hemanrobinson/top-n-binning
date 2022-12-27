@@ -37,7 +37,7 @@ const App = () => {
             <div className="Description">
                 <h2>Categorical Data</h2>
                 <p>
-                Categorical data present a different opportunity  When there are many categories, the smaller ones can be usefully combined into an "Other" category.  This clearly displays the largest categories -- the "Top 5", "Top 10", or however many the user desires.
+                Categorical data present a different opportunity.  When there are many categories, the smaller ones can be usefully combined into an "Other" category.  This clearly displays the largest categories -- the "Top 5", "Top 10", or however many the user desires.
                 </p>
                 <p>
                 "Other" bins have been used for many years.  With a modern user interface, we can make them interactively adjustable and efficient for the user.  This is particularly useful when exploring "long-tailed" distributions, as in the bar chart below.
@@ -70,7 +70,7 @@ const App = () => {
                 The slider is positioned along the axis to afford direct manipulation of that dimension and to conserve screen real estate.
                 </p>
                 <p>
-                The default bin width is determined by <a href="https://github.com/d3/d3-array/blob/main/README.md#thresholdScott">Scott's rule</a>.  Bin widths are rounded to the nearest "nice" tick increment, or fraction thereof.
+                The default bin width is determined by <a href="https://github.com/d3/d3-array/blob/main/README.md#thresholdScott">Scott's rule</a>.  Bin widths are rounded to the nearest "nice" tick increment or fraction thereof.
                 </p>
             </div>
             <a href="https://github.com/hemanrobinson/zoom/">Code Shared on GitHub</a>
