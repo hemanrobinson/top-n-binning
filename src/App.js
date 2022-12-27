@@ -64,13 +64,10 @@ const App = () => {
                 To minimize distraction from the data display, controls are displayed only when they can be used.
                 </p>
                 <p>
-                An alternative design using a hand ("grabber") cursor on the data display was considered, but usability tests showed that the slider control is easier to learn.
+                The slider is positioned along the axis to afford direct manipulation in that dimension and to conserve screen real estate.
                 </p>
                 <p>
-                The slider is positioned along the axis to afford direct manipulation of that dimension and to conserve screen real estate.
-                </p>
-                <p>
-                The default bin width is determined by <a href="https://github.com/d3/d3-array/blob/main/README.md#thresholdScott">Scott's rule</a>.  Bin widths are rounded to the nearest "nice" tick increment or fraction thereof.
+                The default bin width is determined by <a href="https://github.com/d3/d3-array/blob/main/README.md#thresholdScott">Scott's rule</a>.  Bin widths are rounded to the nearest tick interval or fraction thereof.
                 </p>
             </div>
             <a href="https://github.com/hemanrobinson/zoom/">Code Shared on GitHub</a>
