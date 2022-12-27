@@ -58,10 +58,7 @@ const App = () => {
             <div className="Description">
                 <h2>About this Design</h2>
                 <p>
-                Affordances are visible.  The user can see the binning controls.
-                </p>
-                <p>
-                To minimize distraction from the data display, controls are displayed only when they can be used.
+                Affordances are visible:  the user can see the binning controls.  To minimize distraction from the data display, controls are displayed only when they can be used.
                 </p>
                 <p>
                 The slider is positioned along the axis to afford direct manipulation in that dimension and to conserve screen real estate.
