@@ -33,12 +33,14 @@ const Histogram = ( props ) => {
         yDomain0,
         xScale,
         yScale,
-        histogram,
         bins;
         
     // Get the X scale.
     const [ xDomain, setXDomain ] = useState( xDomain0 );
-    xScale = d3.scaleLinear().domain( xDomain ).range([ left, width - right ]);
+    xScale = d3.scaleLinear()
+        .range([ left, width - right ])
+        .domain( xDomain )
+        .nice();
     
     // Assign the X aggregate factor.
     const [ xAggregate, setXAggregate ] = useState( 0.5 );
@@ -46,13 +48,9 @@ const Histogram = ( props ) => {
         setXDomain( xScale.domain());
         setXAggregate( value );
     };
-
-    // Calculate the histogram bins.
-    histogram = d3.histogram()
-        .value( d => d[ columnIndex ])
-        .domain( xDomain0 )
-        .thresholds( Math.round( Math.exp( 5 * ( 1 - xAggregate ))));
-    bins = histogram( data );
+    
+    // Calculate the X bins.
+    bins = Graph.getBins( data, columnIndex, xScale, xAggregate );
 
     // Get the Y scale.
     yDomain0 = [ 0, 1.05 * d3.max( bins, d => d.length )];      // a 5% margin

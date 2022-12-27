@@ -127,6 +127,8 @@ it( "zooms in one dimension: mousedown, mousemove, and mouseup events", () => {
     
     // TODO:  Test more cases here.
 });
+    
+// TODO:  Test the getBins method, which probably needs further refining.
 
 it( "draws the axes", () => {
     let ref = { current: { childNodes: [

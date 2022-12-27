@@ -28,7 +28,7 @@ const App = () => {
                 For continuous data sets, there are multiple algorithms for determining bin widths.  See, for example, <a href="https://observablehq.com/@jonhelfman/plot-histogram-bin-width">Jonathan Helfman's notebook.</a>  There is not always one "best" bin width.  So, it's best to let the user explore.
                 </p>
                 <p>
-                A slider control on the axis affords adjustment of the bins.  In the histogram below, larger bin widths suggest a normal distribution.  Smaller bin widths suggest a bimodal distribution.  The distribution is in fact normal and bimodal.
+                A slider control on the axis affords adjustment of the bins.  In the histogram below, larger bin widths suggest the data might fit a normal distribution.  Smaller bin widths suggest a bimodal distribution.  (The generated data are in fact bimodal).
                 </p>
             </div>
             <div className="Graph">
@@ -68,6 +68,9 @@ const App = () => {
                 </p>
                 <p>
                 The slider is positioned along the axis to afford direct manipulation of that dimension and to conserve screen real estate.
+                </p>
+                <p>
+                The default bin width is determined by <a href="https://github.com/d3/d3-array/blob/main/README.md#thresholdScott">Scott's rule</a>.  Bin widths are rounded to the nearest "nice" tick increment, or fraction thereof.
                 </p>
             </div>
             <a href="https://github.com/hemanrobinson/zoom/">Code Shared on GitHub</a>

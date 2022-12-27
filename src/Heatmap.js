@@ -36,13 +36,15 @@ const Heatmap = ( props ) => {
         yDomain0,
         xScale,
         yScale,
-        histogram,
         bins,
         tiles;
         
     // Get the X scale.
     const [ xDomain, setXDomain ] = useState( xDomain0 );
-    xScale = d3.scaleLinear().domain( xDomain ).range([ left, width - right ]);
+    xScale = d3.scaleLinear()
+        .range([ left, width - right ])
+        .domain( xDomain )
+        .nice();
     
     // Get the unique Y values.
     let values = Array.from( d3.rollup( data, v => v.length, d => d[ yIndex ]));
@@ -66,13 +68,9 @@ const Heatmap = ( props ) => {
         setYDomain( yScale.domain());
         setYAggregate( value );
     };
-
+    
     // Calculate the X bins.
-    histogram = d3.histogram()
-        .value( d => d[ xIndex ])
-        .domain( xDomain0 )
-        .thresholds( Math.round( Math.exp( 5 * ( 1 - xAggregate ))));
-    bins = histogram( data );
+    bins = Graph.getBins( data, xIndex, xScale, xAggregate );
     
     // Count the number of values in each tile.
     tiles = [];
@@ -181,8 +179,8 @@ Heatmap.draw = ( ref, width, height, margin, padding, isZooming, isXBinning, isY
         .append( "rect" )
         .attr( "x", ( d, i ) => xScale( bins[( i / nY ) >> 0 ].x0 ))
         .attr( "y", ( d, i ) => yScale( yDomain0[ i % nY ]) + 1 )
-        .attr( "width", ( d, i ) => xScale( bins[( i / nY ) >> 0 ].x1 ) - xScale( bins[( i / nY ) >> 0 ].x0 ) - 1 )
-        .attr( "height", ( d ) => ( d > 0 ) ? yScale.bandwidth() - 1 : 0 )
+        .attr( "width", ( d, i ) => Math.max( 0, xScale( bins[( i / nY ) >> 0 ].x1 ) - xScale( bins[( i / nY ) >> 0 ].x0 ) - 1 ))
+        .attr( "height", ( d ) => ( d > 0 ) ? Math.max( 0, yScale.bandwidth() - 1 ) : 0 )
         .style( "fill", ( d ) => colorScale( d ));
         
     // Draw the axes and the controls.
