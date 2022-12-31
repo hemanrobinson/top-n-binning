@@ -27,7 +27,7 @@ const App = () => {
                 </p>
                 <h2>Continuous Data</h2>
                 <p>
-                For continuous data sets, there are multiple algorithms for determining bin widths.  See, for example, <a href="https://observablehq.com/@jonhelfman/plot-histogram-bin-width">Jonathan Helfman's notebook.</a>  There is not always one "best" bin width.  So, it's best to let the user explore.
+                For continuous variables, there are <a href="https://en.wikipedia.org/wiki/Histogram#Number_of_bins_and_width">many rules for determining the bin width</a>.  Good examples of the rules supported in d3 are in notebooks <a href="https://observablehq.com/@d3/d3-bin">here</a> and <a href="https://observablehq.com/@jonhelfman/plot-histogram-bin-width">here</a>.  This problem doesn't have one right answer, so it's best to let the user explore.
                 </p>
                 <p>
                 A slider control on the axis affords adjustment of the bins.  In the histogram below, larger bin widths suggest the data might fit a normal distribution.  Smaller bin widths suggest a bimodal distribution.  (The generated data are in fact bimodal).
