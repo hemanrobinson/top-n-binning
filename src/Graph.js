@@ -519,9 +519,11 @@ Graph.getBins = ( data, columnIndex, xScale, aggregate ) => {
     let binWidth = domain / bins.length;
 
     // Recalculate the bin width based on the aggregate value, rounded to the minimum tick width.
+    const k = 4;
     const minWidth = tickWidth / 12;
-    let newBinWidth = 4 * binWidth * aggregate * aggregate;
-    newBinWidth = Math.min( Math.max( newBinWidth, minWidth ), 4 * binWidth - minWidth );
+    const maxWidth = binWidth * Math.pow( 2, k );
+    let newBinWidth = maxWidth * Math.pow( aggregate, k );
+    newBinWidth = Math.min( Math.max( newBinWidth, minWidth ), maxWidth );
     newBinWidth = minWidth * Math.round( newBinWidth / minWidth );
 
     // If the new bin width does not evenly span the domain, reduce it.
