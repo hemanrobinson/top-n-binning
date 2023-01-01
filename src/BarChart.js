@@ -53,7 +53,7 @@ const BarChart = ( props ) => {
     
     // Combine bars if requested.
     let n = Math.round( xAggregate * bars.length );
-    if( 0 < n ) {
+    if( 1 < n ) {
         let total = 0;
         for( let i = 0; ( i < n ); i++ ) {
             total += bars[ bars.length - i - 1 ][ 1 ];

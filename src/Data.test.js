@@ -10,7 +10,7 @@ it( "returns column names", () => {
     expect( Data.getColumnNames( "Normal" )).toEqual([ "Random Normal, Bimodal" ]);
     expect( Data.getColumnNames( "Penguins" )).toEqual([ "Species", "Island", "Bill Length (mm)", "Bill Depth (mm)", "Flipper Length (mm)", "Body Mass (g)", "Sex" ]);
     expect( Data.getColumnNames( "Sales" )).toEqual([ "Model", "Cars Sold, 2022 Q1" ]);
-    expect( Data.getColumnNames( "Trends" )).toEqual([ "Google Trends 2020", "Interest" ]);
+    expect( Data.getColumnNames( "Trends" )).toEqual([ "Week Number", "Week", "Google Trends 2020", "Interest" ]);
 });
 
 it( "returns values", () => {
@@ -19,6 +19,6 @@ it( "returns values", () => {
     expect( Data.getValues( "Normal" ).length ).toBe( 500 );
     expect( Data.getValues( "Penguins" ).length ).toBe( 342 );
     expect( Data.getValues( "Sales" ).length ).toBe( 288 );
-    expect( Data.getValues( "Trends" ).length ).toBe( 2226 );
+    expect( Data.getValues( "Trends" ).length ).toBe( 1113 );
 });
 

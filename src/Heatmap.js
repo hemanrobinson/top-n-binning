@@ -27,8 +27,9 @@ const Heatmap = ( props ) => {
         left   = margin.left   + padding.left;
     let ref = useRef(),
         { dataSet } = props,
-        xIndex = 1,
-        yIndex = 0,
+        xIndex = 0,
+        yIndex = 2,
+        zIndex = 3,
         xLabel = Data.getColumnNames( dataSet )[ xIndex ],
         yLabel = Data.getColumnNames( dataSet )[ yIndex ],
         data = Data.getValues( dataSet ),
@@ -80,15 +81,15 @@ const Heatmap = ( props ) => {
             t[ i ] = 0;
         }
         bin.forEach(( b ) => {
-            let k = yDomain0.indexOf( b[ 0 ]);
-            t[ k ]++;
+            let k = yDomain0.indexOf( b[ yIndex ]);
+            t[ k ] += b[ zIndex ];
         })
         tiles = tiles.concat( t );
     });
     
     // Combine tiles if requested.
     let n = Math.round( yAggregate * yDomain0.length );
-    if( 0 < n ) {
+    if( 1 < n ) {
         for( let j = bins.length; ( j > 0 ); j-- ) {
             let total = 0;
             for( let i = 1; ( i <= n ); i++ ) {
