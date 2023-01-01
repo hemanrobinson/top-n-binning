@@ -27,10 +27,10 @@ const App = () => {
                 </p>
                 <h2>Continuous Data</h2>
                 <p>
-                For continuous variables, there are <a href="https://en.wikipedia.org/wiki/Histogram#Number_of_bins_and_width">many rules for determining the bin width</a>.  Good examples of the rules supported in d3 are in notebooks <a href="https://observablehq.com/@d3/d3-bin">here</a> and <a href="https://observablehq.com/@jonhelfman/plot-histogram-bin-width">here</a>.  This problem doesn't have one right answer, so it's best to let the user explore.
+                For continuous data, there are <a href="https://en.wikipedia.org/wiki/Histogram#Number_of_bins_and_width">many rules</a> for determining the bin width.  The rules supported in d3 are demonstrated in notebooks <a href="https://observablehq.com/@d3/d3-bin">here</a> and <a href="https://observablehq.com/@jonhelfman/plot-histogram-bin-width">here</a>.  This problem doesn't have one right answer, so it's best to let the user explore.
                 </p>
                 <p>
-                A slider control on the axis affords adjustment of the bins.  In the histogram below, larger bin widths suggest the data might fit a normal distribution.  Smaller bin widths suggest a bimodal distribution.  (The generated data are in fact bimodal).
+                A slider control on the axis affords adjustment of the bins.  In the histogram below, larger bin widths suggest the data might fit a normal distribution.  Smaller bin widths suggest a multimodal distribution.  (The generated data are in fact bimodal).
                 </p>
             </div>
             <div className="Graph">
@@ -39,10 +39,10 @@ const App = () => {
             <div className="Description">
                 <h2>Categorical Data</h2>
                 <p>
-                Categorical data present a different opportunity.  When there are many categories, the smaller ones can be usefully combined into an "Other" category.  This clearly displays the largest categories -- the "Top 5", "Top 10", or however many the user desires.
+                Categorical data present a different opportunity.  When there are many categories, the smaller ones can be usefully combined into an "Other" bin.  This clearly displays the largest categories -- the "Top 5", "Top 10", or however many the user desires.
                 </p>
                 <p>
-                "Other" bins have been used for many years.  With a modern user interface, we can make them interactively adjustable and efficient for the user.  This is particularly useful when exploring "long-tailed" distributions, as in the bar chart below.
+                This is another problem that doesn't have one right answer, so it's best to let the user explore.  With a modern user interface, we can make the "Other" bin dynamically adjustable.  This is particularly useful when exploring "long-tailed" distributions, as in the bar chart below.
                 </p>
             </div>
             <div className="Graph">
