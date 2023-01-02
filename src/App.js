@@ -78,7 +78,7 @@ const App = () => {
                 Bin widths are rounded to the nearest tick interval or even division thereof.  (There's no statistical reason to do that, but people prefer bins aligned with ticks.)
                 </p>
             </div>
-            <a href="https://github.com/hemanrobinson/zoom/">Code Shared on GitHub</a>
+            <a href="https://github.com/hemanrobinson/bin/">Code Shared on GitHub</a>
         </div>
     );
 }
