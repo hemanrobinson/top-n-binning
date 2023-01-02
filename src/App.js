@@ -27,7 +27,10 @@ const App = () => {
                 </p>
                 <h2>Continuous Data</h2>
                 <p>
-                For continuous data, there are <a href="https://en.wikipedia.org/wiki/Histogram#Number_of_bins_and_width">many rules</a> for determining the bin width.  The rules supported in d3 are demonstrated in notebooks <a href="https://observablehq.com/@d3/d3-bin">here</a> and <a href="https://observablehq.com/@jonhelfman/plot-histogram-bin-width">here</a>.  This problem doesn't have one right answer, so it's best to let the user explore.
+                For continuous data, there are <a href="https://en.wikipedia.org/wiki/Histogram#Number_of_bins_and_width">many rules</a> for determining bin width.  The rules supported in d3 are demonstrated in notebooks <a href="https://observablehq.com/@d3/d3-bin">here</a> and <a href="https://observablehq.com/@jonhelfman/plot-histogram-bin-width">here</a>.
+                </p>
+                <p>
+                These rules produce different results, because this problem doesn't have one right answer.  So it's best to let the user explore.
                 </p>
                 <p>
                 A slider control on the axis affords adjustment of the bins.  In the histogram below, larger bin widths suggest the data might fit a normal distribution.  Smaller bin widths suggest a multimodal distribution.  (The generated data are in fact bimodal).
@@ -39,10 +42,13 @@ const App = () => {
             <div className="Description">
                 <h2>Categorical Data</h2>
                 <p>
-                Categorical data present a different opportunity.  When there are many categories, the smaller ones can be usefully combined into an "Other" bin.  This clearly displays the largest categories -- the "Top 5", "Top 10", or however many the user desires.
+                For categorical data, the smaller categories can be combined into an "Other" bin.  This clearly displays the larger categories -- the "Top 5", "Top 10", or however many the user desires.
                 </p>
                 <p>
-                This is another problem that doesn't have one right answer, so it's best to let the user explore.  With a modern user interface, we can make the "Other" bin dynamically adjustable.  This is particularly useful when exploring "long-tailed" distributions, as in the bar chart below.
+                This is another problem that doesn't have one right answer, so it's best to let the user explore.
+                </p>
+                <p>
+                With a modern user interface, we can make the "Other" bin dynamically adjustable.  This is particularly useful with "long-tailed" distributions, as in the bar chart below.
                 </p>
             </div>
             <div className="Graph">
@@ -58,15 +64,18 @@ const App = () => {
                 <Heatmap dataSet={ "Trends" } />
             </div>
             <div className="Description">
-                <h2>About this Design</h2>
+                <h2>Design Notes</h2>
                 <p>
-                Affordances are visible:  the user can see the binning controls.  To minimize distraction from the data display, controls are displayed only when they can be used.
+                To minimize distraction from the data display, controls are displayed only when they can be used.  Controls are discoverable simply by hovering over the graph.
                 </p>
                 <p>
                 The slider is positioned along the axis to afford direct manipulation in that dimension and to conserve screen real estate.
                 </p>
                 <p>
-                The default bin width is determined by <a href="https://github.com/d3/d3-array/blob/main/README.md#thresholdScott">Scott's rule</a>.  Bin widths are rounded to the nearest tick interval or fraction thereof.
+                The default bin width is determined by <a href="https://github.com/d3/d3-array/blob/main/README.md#thresholdScott">Scott's rule</a>.
+                </p>
+                <p>
+                Bin widths are rounded to the nearest tick interval or even division thereof.  (There's no statistical reason to do that, but people prefer bins aligned with ticks.)
                 </p>
             </div>
             <a href="https://github.com/hemanrobinson/zoom/">Code Shared on GitHub</a>
