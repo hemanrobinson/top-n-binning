@@ -75,7 +75,7 @@ const App = () => {
                 The default bin width is determined by <a href="https://github.com/d3/d3-array/blob/main/README.md#thresholdScott">Scott's rule</a>.
                 </p>
                 <p>
-                Bin widths are rounded to the nearest tick interval or even division thereof.  (There's no statistical reason to do that, but people prefer bins aligned with ticks.)
+                For readability, bin widths are rounded to the nearest tick interval or even division thereof.
                 </p>
             </div>
             <a href="https://github.com/hemanrobinson/bin/">Code Shared on GitHub</a>
