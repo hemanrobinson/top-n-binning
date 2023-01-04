@@ -20,7 +20,7 @@ const App = () => {
                     <a href="https://www.cs.umd.edu/users/ben/"><img alt="Dr. Ben Shneiderman" src={shneiderman}/></a>
                 </p>
                 <p>
-                Does "zooming" include binning?  In aggregate graphs, adjusting scales may not help us explore the data.  However, adjusting bins often can.
+                Does "zooming" include binning?  In graphs that display summarized data, rather than individual points, zooming the scales may not help us explore.  Adjusting the bins often can.
                 </p>
                 <p>
                 Hover over the graphs below to see the binning controls.  Use the sliders to adjust the bins.
@@ -72,11 +72,18 @@ const App = () => {
                 The slider is positioned along the axis to afford direct manipulation in that dimension and to conserve screen real estate.
                 </p>
                 <p>
-                The default bin width is determined by <a href="https://github.com/d3/d3-array/blob/main/README.md#thresholdScott">Scott's rule</a>.
+                The default bin width is determined by <a href="https://github.com/d3/d3-array/blob/main/README.md#thresholdScott">Scott's binning rule</a>.
                 </p>
                 <p>
                 For readability, bin widths are rounded to the nearest tick interval or even division thereof.
                 </p>
+                <br/>
+                <h2>References</h2>
+                <ul>
+                    <li><a href="https://bayes.wustl.edu/Manual/FreedmanDiaconis1_1981.pdf">Freedman, David; Diaconis, P. (1981). "On the histogram as a density estimator: L2 theory". Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete. 57 (4): 453–476.</a><br/>Freedman and Diaconis' binning rule</li>
+                    <li><a href="https://www.jstor.org/stable/2335182?origin=JSTOR-pdf">Scott, David W. (1979). "On optimal and data-based histograms". Biometrika. 66 (3): 605–610.</a><br/>Scott's binning rule</li>
+                    <li><a href="https://www.jstor.org/stable/2965501#metadata_info_tab_contents">Sturges, H. A. (1926). "The choice of a class interval". Journal of the American Statistical Association. 21 (153): 65–66.</a><br/>Sturges' binning rule</li>
+                </ul>
             </div>
             <a href="https://github.com/hemanrobinson/bin/">Code Shared on GitHub</a>
         </div>
