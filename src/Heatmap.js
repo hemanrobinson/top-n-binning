@@ -118,7 +118,7 @@ const Heatmap = ( props ) => {
             let xUp = event.nativeEvent.offsetX,
                 yUp = event.nativeEvent.offsetY,
                 isBinning = (( 0 <= xUp ) && ( xUp < width ) && ( 0 <= yUp ) && ( yUp < height ));
-            Graph.onMouseUp( ref, event, width, height, margin, padding, xScale, yScale, xDomain0, yDomain0 );
+            Graph.onMouseUp( event, width, height, margin, padding, xScale, yScale, xDomain0, yDomain0 );
             Heatmap.draw( ref, width, height, margin, padding, false, isBinning, isBinning, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel, bins, tiles );
         }
     };

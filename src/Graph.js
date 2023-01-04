@@ -339,7 +339,6 @@ Graph.onMouseDown = ( event, width, height, margin, padding, xScrollSize, xScale
  *
  * This method modifies Graph.downLocation.
  *
- * @param  {Object}   ref       reference to DIV
  * @param  {Event}    event     event
  * @param  {number}   width     width, in pixels
  * @param  {number}   height    height, in pixels
@@ -350,7 +349,7 @@ Graph.onMouseDown = ( event, width, height, margin, padding, xScrollSize, xScale
  * @param  {Array}    xDomain0  Initial X domain
  * @param  {Array}    yDomain0  Initial Y domain
  */
-Graph.onMouseUp = ( ref, event, width, height, margin, padding, xScale, yScale, xDomain0, yDomain0 ) => {
+Graph.onMouseUp = ( event, width, height, margin, padding, xScale, yScale, xDomain0, yDomain0 ) => {
 
     // Initialization.
     const d = 8;
