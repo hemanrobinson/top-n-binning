@@ -80,6 +80,7 @@ const App = () => {
                 <br/>
                 <h2>References</h2>
                 <ul>
+                    <li><a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1996eyes.pdf">Shneiderman, B. (1996). "The Eyes Have It: A Task by Data Type Taxonomy for Information Visualizations". In Proceedings of the IEEE Symposium on Visual Languages, Sept. 1996, 336-343..</a><br/>Shneiderman's Information-Seeking Mantra</li>
                     <li><a href="https://bayes.wustl.edu/Manual/FreedmanDiaconis1_1981.pdf">Freedman, David; Diaconis, P. (1981). "On the histogram as a density estimator: L2 theory". Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete. 57 (4): 453–476.</a><br/>Freedman and Diaconis' binning rule</li>
                     <li><a href="https://www.jstor.org/stable/2335182?origin=JSTOR-pdf">Scott, David W. (1979). "On optimal and data-based histograms". Biometrika. 66 (3): 605–610.</a><br/>Scott's binning rule</li>
                     <li><a href="https://www.jstor.org/stable/2965501#metadata_info_tab_contents">Sturges, H. A. (1926). "The choice of a class interval". Journal of the American Statistical Association. 21 (153): 65–66.</a><br/>Sturges' binning rule</li>
