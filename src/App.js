@@ -66,7 +66,7 @@ const App = () => {
             <div className="Description">
                 <h2>Design Notes</h2>
                 <p>
-                To minimize distraction from the data display, controls are displayed only when they can be used.  Controls are discoverable by simply hovering over the graph.
+                To minimize distraction from the data display, controls are displayed only when they can be used.  On desktop devices, controls are discoverable by hovering over the graph.  On mobile devices (not supported here) a tap might be used instead.
                 </p>
                 <p>
                 The slider is positioned along the axis to afford direct manipulation in that dimension and to conserve screen real estate.
