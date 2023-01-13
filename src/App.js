@@ -48,7 +48,7 @@ const App = () => {
                 This is another problem that doesn't have one right answer, so it's best to let the user explore.
                 </p>
                 <p>
-                With a modern user interface, we can make the "Other" bin dynamically adjustable.  This is particularly useful with "long-tailed" distributions, as in the bar chart below.
+                With modern technology, we can make the "Other" bin dynamically adjustable.  This is particularly useful with "long-tailed" distributions, as in the bar chart below.
                 </p>
             </div>
             <div className="Graph">
@@ -57,7 +57,7 @@ const App = () => {
             <div className="Description">
                 <h2>Multiple Dimensions</h2>
                 <p>
-                This user interface extends readily to multiple dimensions.  The heatmap below demonstrates continuous binning on the horizontal axis and categorical binning on the vertical axis.
+                This user interface extends readily to multiple dimensions.  The heatmap below demonstrates both continuous and categorical binning.
                 </p>
             </div>
             <div className="Graph">
@@ -66,19 +66,19 @@ const App = () => {
             <div className="Description">
                 <h2>Design Notes</h2>
                 <p>
-                To minimize distraction from the data display, controls are displayed only when they can be used.  On desktop devices, controls are discoverable by hovering over the graph.  On mobile devices (not supported here) a tap might be used instead.
+                To minimize distraction from the data display, controls are displayed only when they can be used.  On desktops, controls are discoverable by hovering over the graph.  (On mobile devices, not supported here, a tap might serve this purpose.)
                 </p>
                 <p>
                 The slider is positioned along the axis to afford direct manipulation in that dimension and to conserve screen real estate.
                 </p>
                 <p>
+                For readability, bin widths are rounded to the nearest tick interval or even division thereof.
+                </p>
+                <p>
                 The default bin width is determined by Scott's binning rule (Scott, 1979).
                 </p>
                 <p>
-                The minimum bin width is the smallest visible width.  The maximum bin width puts all the data in one bin.  These are natural limits that users will expect.
-                </p>
-                <p>
-                For readability, bin widths are rounded to the nearest tick interval or even division thereof.
+                The minimum bin width is the smallest visible width.  The maximum bin width puts all the data in one bin.  These are natural limits that users expect.
                 </p>
                 <br/>
                 <h2>References</h2>
