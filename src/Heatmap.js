@@ -88,6 +88,7 @@ const Heatmap = ( props ) => {
     });
     
     // Combine tiles if requested.
+    // TODO: Don't assume that the tiles are sorted.
     let n = Math.round( yAggregate * yDomain0.length );
     if( 1 < n ) {
         for( let j = bins.length; ( j > 0 ); j-- ) {

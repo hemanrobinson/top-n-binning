@@ -52,6 +52,7 @@ const BarChart = ( props ) => {
     bars.sort(( a, b ) => ( b[ 1 ] - a[ 1 ]));
     
     // Combine bars if requested.
+    // TODO: Don't assume that the bars are sorted.
     let n = Math.round( xAggregate * bars.length );
     if( 1 < n ) {
         let total = 0;

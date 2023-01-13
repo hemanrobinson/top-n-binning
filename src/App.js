@@ -14,20 +14,20 @@ const App = () => {
             <div className="Description">
                 <h1>Dynamic Binning</h1>
                 <p>
-                <a href="https://www.cs.umd.edu/users/ben/">Ben Shneiderman</a> taught us all to <a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1996eyes.pdf">"Overview first, zoom and filter, then details-on-demand"</a>.
+                <a href="https://www.cs.umd.edu/users/ben/">Ben Shneiderman</a> taught us all to <a href="https://www.perceptualedge.com/articles/b-eye/path_to_visual_discovery.pdf">"Overview first, zoom and filter, then details-on-demand"</a> (Shneiderman, 1996).
                 </p>
                 <p className="center">
                     <a href="https://www.cs.umd.edu/users/ben/"><img alt="Dr. Ben Shneiderman" src={shneiderman}/></a>
                 </p>
                 <p>
-                Does "zooming" include binning?  In graphs that display summarized data, rather than individual points, zooming the scales may not help us explore.  Adjusting the bins often can.
+                Does "zooming" include binning?  In graphs of aggregated data, zooming the scales may not help us explore.  Adjusting the bins often can.
                 </p>
                 <p>
                 Hover over the graphs below to see the binning controls.  Use the sliders to adjust the bins.
                 </p>
                 <h2>Continuous Data</h2>
                 <p>
-                For continuous data, there are <a href="https://en.wikipedia.org/wiki/Histogram#Number_of_bins_and_width">many rules</a> for determining bin width.  The rules supported in d3 are demonstrated in notebooks <a href="https://observablehq.com/@d3/d3-bin">here</a> and <a href="https://observablehq.com/@jonhelfman/plot-histogram-bin-width">here</a>.
+                For continuous data, there are <a href="https://en.wikipedia.org/wiki/Histogram#Number_of_bins_and_width">many rules</a> for determining bin width.  D3's supported rules are <a href="https://observablehq.com/@d3/d3-bin">demonstrated here</a> (Freedman and Diaconis, 1981) (Scott, 1979) (Sturges, 1926).
                 </p>
                 <p>
                 These rules produce different results, because this problem doesn't have one right answer.  So it's best to let the user explore.
@@ -72,7 +72,10 @@ const App = () => {
                 The slider is positioned along the axis to afford direct manipulation in that dimension and to conserve screen real estate.
                 </p>
                 <p>
-                The default bin width is determined by <a href="https://github.com/d3/d3-array/blob/main/README.md#thresholdScott">Scott's binning rule</a>.
+                The default bin width is determined by Scott's binning rule (Scott, 1979).
+                </p>
+                <p>
+                The minimum bin width is the smallest visible width.  The maximum bin width puts all the data in one bin.  These are natural limits that users will expect.
                 </p>
                 <p>
                 For readability, bin widths are rounded to the nearest tick interval or even division thereof.
@@ -80,10 +83,10 @@ const App = () => {
                 <br/>
                 <h2>References</h2>
                 <ul>
-                    <li><a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1996eyes.pdf">Shneiderman, B. (1996). "The Eyes Have It: A Task by Data Type Taxonomy for Information Visualizations". In Proceedings of the IEEE Symposium on Visual Languages, Sept. 1996, 336-343..</a><br/>Shneiderman's Information-Seeking Mantra</li>
-                    <li><a href="https://bayes.wustl.edu/Manual/FreedmanDiaconis1_1981.pdf">Freedman, David; Diaconis, P. (1981). "On the histogram as a density estimator: L2 theory". Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete. 57 (4): 453–476.</a><br/>Freedman and Diaconis' binning rule</li>
-                    <li><a href="https://www.jstor.org/stable/2335182?origin=JSTOR-pdf">Scott, David W. (1979). "On optimal and data-based histograms". Biometrika. 66 (3): 605–610.</a><br/>Scott's binning rule</li>
-                    <li><a href="https://www.jstor.org/stable/2965501#metadata_info_tab_contents">Sturges, H. A. (1926). "The choice of a class interval". Journal of the American Statistical Association. 21 (153): 65–66.</a><br/>Sturges' binning rule</li>
+                    <li>Freedman, D. and Diaconis, P. (1981). "On the histogram as a density estimator: L2 theory". Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete. 57 (4): 453–476. <a href="https://bayes.wustl.edu/Manual/FreedmanDiaconis1_1981.pdf">https://bayes.wustl.edu/Manual/FreedmanDiaconis1_1981.pdf</a>.</li><br/>
+                    <li>Scott, D. W. (1979). "On optimal and data-based histograms". Biometrika. 66 (3): 605–610. <a href="https://doi.org/10.2307/2335182">https://doi.org/10.2307/2335182</a>.</li><br/>
+                    <li>Shneiderman, B. (1996). "The Eyes Have It: A Task by Data Type Taxonomy for Information Visualizations". In Proceedings of the IEEE Symposium on Visual Languages, Sept. 1996, 336-343. <a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1996eyes.pdf">https://www.cs.umd.edu/~ben/papers/Shneiderman1996eyes.pdf</a>.</li><br/>
+                    <li>Sturges, H. A. (1926). "The choice of a class interval". Journal of the American Statistical Association. 21 (153): 65–66. <a href="https://www.jstor.org/stable/2965501">https://www.jstor.org/stable/2965501</a>.</li><br/>
                 </ul>
             </div>
             <a href="https://github.com/hemanrobinson/bin/">Code Shared on GitHub</a>

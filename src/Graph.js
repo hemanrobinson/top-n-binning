@@ -510,17 +510,29 @@ Graph.getBins = ( data, columnIndex, xScale, aggregate ) => {
     // Get the ticks.
     const ticks = xScale.ticks();
     const n = ticks.length;
-    const tickWidth = ticks[ 1 ] - ticks[ 0 ];
     const domain = ticks[ n - 1 ] - ticks[ 0 ];
     
-    // Get the initial bin width from Scott's algorithm.
+    // Get the initial bin width from Scott's rule.
     let bins = d3.bin().thresholds( d3.thresholdScott )( values );
     let binWidth = domain / bins.length;
-
-    // Recalculate the bin width based on the aggregate value, rounded to the minimum tick width.
-    const k = 4;
-    const minWidth = tickWidth / 12;
-    const maxWidth = binWidth * Math.pow( 2, k );
+    
+    // Ensure that the maximum bin width covers all the data.
+    const m = 2;
+    let k = 0;
+    let maxWidth = binWidth;
+    let minWidth = binWidth;
+    while( maxWidth < domain ) {
+        k++;
+        maxWidth *= m;
+        minWidth /= m;
+    }
+    
+    // Ensure that the minimum bin width is visible.
+    while( minWidth < xScale.domain() / xScale.range()) {
+        minWidth *= m;
+    }
+    
+    // Calculate the new bin width based on the aggregate value, rounded to the minimum tick width.
     let newBinWidth = maxWidth * Math.pow( aggregate, k );
     newBinWidth = Math.min( Math.max( newBinWidth, minWidth ), maxWidth );
     newBinWidth = minWidth * Math.round( newBinWidth / minWidth );
