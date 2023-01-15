@@ -72,6 +72,7 @@ const Graph = React.forwardRef(( props, ref ) => {
         left   = margin.left   + padding.left;
     
     // Return the component.
+    // Using "value" instead of "defaultValue" below suppresses a warning.
     return <div style={{width: width, height: height}} className="parent" ref={ref}>
         <svg width={width} height={height} onMouseDown={onMouseDown} onMouseMove={onMouseUp} onMouseUp={onMouseUp} onMouseOver={onMouseOver} onMouseOut={onMouseOut} />
         <Button variant="contained" onClick={()=>onZoom(true )}
@@ -81,7 +82,7 @@ const Graph = React.forwardRef(( props, ref ) => {
             style={{ position: "absolute", padding: 0, minWidth: buttonSize, width: buttonSize, height: buttonSize, top: ( height + 1 - buttonSize ), left: 1 + buttonSize,
             display: "none" }}>-</Button>
         <Slider min={0} max={1} step={0.01}
-            defaultValue={xAggregate} onChange={onXAggregate} className="sliderHorz"
+            value={xAggregate} onChange={onXAggregate} className="sliderHorz"
             style={{ width: width - left - right + 1, top: height - margin.bottom - sliderOffset, left: left + 1, position: "absolute", display: "none" }} />
         <Slider min={0} max={1} step={0.01}
             defaultValue={yAggregate} onChange={onYAggregate} className="sliderVert"  orientation="vertical"
@@ -501,58 +502,83 @@ Graph.onMouseUp = ( event, width, height, margin, padding, xScale, yScale, xDoma
  * @param  {number}      aggregate      aggregate value, between 0 and 1
  * @return {number[][]}  binned values
  */
-Graph.getBins = ( data, columnIndex, xScale, aggregate ) => {
+Graph.getDefaultAggregate = ( data, columnIndex, xScale ) => {
+    
+    // Get the scale information.
+    const ticks = xScale.ticks();
+    const domain = xScale.domain();
+    const range = xScale.range();
+    
+    // Ensure that the minimum bin width is visible.
+    let minWidth = ( ticks[ 1 ] - ticks[ 0 ]) / 16;
+    minWidth = Math.max( minWidth, 2 * ( domain[ 1 ] - domain[ 0 ]) / ( range[ 1 ] - range[ 0 ]));
 
     // Get the values.
     let values = [];
     data.forEach( d => values.push( d[ columnIndex ]));
     
-    // Get the ticks.
-    const ticks = xScale.ticks();
-    const n = ticks.length;
-    const domain = ticks[ n - 1 ] - ticks[ 0 ];
-    
     // Get the initial bin width from Scott's rule.
     let bins = d3.bin().thresholds( d3.thresholdScott )( values );
-    let binWidth = domain / bins.length;
+    let binWidth = ( domain[ 1 ] - domain[ 0 ]) / bins.length;
     
-    // Ensure that the maximum bin width covers all the data.
-    const m = 2;
-    let k = 0;
-    let maxWidth = binWidth;
-    let minWidth = binWidth;
-    while( maxWidth < domain ) {
-        k++;
-        maxWidth *= m;
-        minWidth /= m;
-    }
+    // Calculate the default aggregate value from the binWidth.
+    const k = Math.round(( domain[ 1 ] - domain[ 0 ]) / minWidth );
+    let aggregate = 1 - (( domain[ 1 ] - domain[ 0 ]) / binWidth - 1 ) / ( k - 1 );
+    
+    // Transform the aggregate value.
+    let myAggregate = aggregate;                                    // between 0 and 1
+    myAggregate = aggregate * aggregate * aggregate * aggregate;    // between 0 and 1
+//    myAggregate = Math.exp( myAggregate );                          // between 1 and Math.E
+//    myAggregate -= 1;                                               // between 0 and ( Math.E - 1 )
+//    myAggregate /= ( Math.E - 1 );                                  // between 0 and 1
+
+    // Return the aggregate value.
+    return myAggregate;
+};
+
+/**
+ * Returns binned values for a continuous set of values and specified aggregate value.
+ *
+ * @param  {Array[]}     data           data set
+ * @param  {number}      columnIndex    index of column to be binned
+ * @param  {D3Scale}     xScale         X scale
+ * @param  {number}      aggregate      aggregate value, between 0 and 1
+ * @return {number[][]}  binned values
+ */
+Graph.getBins = ( data, columnIndex, xScale, aggregate ) => {
+    
+    // Get the scale information.
+    const ticks = xScale.ticks();
+    const domain = xScale.domain();
+    const range = xScale.range();
     
     // Ensure that the minimum bin width is visible.
-    while( minWidth < xScale.domain() / xScale.range()) {
-        minWidth *= m;
-    }
+    let minWidth = ( ticks[ 1 ] - ticks[ 0 ]) / 16;
+    minWidth = Math.max( minWidth, 2 * ( domain[ 1 ] - domain[ 0 ]) / ( range[ 1 ] - range[ 0 ]));
     
-    // Calculate the new bin width based on the aggregate value, rounded to the minimum tick width.
-    let newBinWidth = maxWidth * Math.pow( aggregate, k );
-    newBinWidth = Math.min( Math.max( newBinWidth, minWidth ), maxWidth );
-    newBinWidth = minWidth * Math.round( newBinWidth / minWidth );
-
-    // If the new bin width does not evenly span the domain, reduce it.
-    if( newBinWidth < domain / Math.floor( domain / newBinWidth )) {
-        newBinWidth = domain / Math.floor( domain / newBinWidth );
-    }
+    // Transform the aggregate value.
+    let myAggregate = aggregate;                                    // between 0 and 1
+    myAggregate = Math.sqrt( Math.sqrt( aggregate ));               // between 0 and 1
+//    myAggregate *= ( Math.E - 1 );                                  // between 0 and ( Math.E - 1 )
+//    myAggregate += 1;                                               // between 1 and Math.E
+//    myAggregate = Math.log( myAggregate );                          // between 0 and 1
+    
+    // Calculate the bin width from the aggregate value.
+    const k = Math.round(( domain[ 1 ] - domain[ 0 ]) / minWidth );
+    const d = Math.round( 1 + ( k - 1 ) * ( 1 - myAggregate ));
+    let binWidth = ( domain[ 1 ] - domain[ 0 ]) / d;
 
     // Calculate the thresholds.
     let thresholds = [];
-    const nBins = ( ticks[ n - 1 ] - ticks[ 0 ]) / newBinWidth;
+    const nBins = ( domain[ 1 ] - domain[ 0 ]) / binWidth;
     for( let i = 0; ( i < nBins ); i++ ) {
-        thresholds.push( ticks[ 0 ] + i * newBinWidth );
+        thresholds.push( ticks[ 0 ] + i * binWidth );
     }
 
     // Return the bins.
     const histogram = d3.histogram()
         .value( d => d[ columnIndex ])
-        .domain([ ticks[ 0 ], ticks[ n - 1 ]])
+        .domain( domain )
         .thresholds( thresholds );
     return histogram( data );
 };

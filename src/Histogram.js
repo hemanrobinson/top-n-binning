@@ -43,7 +43,8 @@ const Histogram = ( props ) => {
         .nice();
     
     // Assign the X aggregate factor.
-    const [ xAggregate, setXAggregate ] = useState( 0.5 );
+    const defaultAggregate = Graph.getDefaultAggregate( data, columnIndex, xScale );
+    const [ xAggregate, setXAggregate ] = useState( defaultAggregate );
     let onXAggregate = ( event, value ) => {
         setXDomain( xScale.domain());
         setXAggregate( value );
@@ -93,7 +94,7 @@ const Histogram = ( props ) => {
     
     // Return the component.
     return <Graph width={width} height={height} margin={margin} padding={padding}
-        onZoom={onZoom2D} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onMouseOver={onMouseOver} onMouseOut={onMouseOut} xAggregate={0.5} onXAggregate={onXAggregate} ref={ref} />
+        onZoom={onZoom2D} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onMouseOver={onMouseOver} onMouseOut={onMouseOut} xAggregate={xAggregate} onXAggregate={onXAggregate} ref={ref} />
 };
 
 /**

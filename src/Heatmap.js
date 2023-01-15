@@ -57,7 +57,8 @@ const Heatmap = ( props ) => {
     yScale = d3.scaleBand().domain( yDomain ).range([ height - bottom, top ]);
     
     // Assign the X aggregate factor.
-    const [ xAggregate, setXAggregate ] = useState( 0.5 );
+    const defaultAggregate = Graph.getDefaultAggregate( data, xIndex, xScale );
+    const [ xAggregate, setXAggregate ] = useState( defaultAggregate );
     let onXAggregate = ( event, value ) => {
         setXDomain( xScale.domain());
         setXAggregate( value );
@@ -143,7 +144,7 @@ const Heatmap = ( props ) => {
     // Return the component.
     return <Graph width={width} height={height} margin={margin} padding={padding}
         onZoom={onZoom2D} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onMouseOver={onMouseOver} onMouseOut={onMouseOut}
-            xAggregate={0.5} yAggregate={0} onXAggregate={onXAggregate} onYAggregate={onYAggregate} ref={ref} />
+            xAggregate={xAggregate} yAggregate={0} onXAggregate={onXAggregate} onYAggregate={onYAggregate} ref={ref} />
 };
 
 /**
