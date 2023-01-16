@@ -72,9 +72,6 @@ const App = () => {
                 The slider is positioned along the axis to afford direct manipulation in that dimension and to conserve screen real estate.
                 </p>
                 <p>
-                For readability, bin widths are rounded to the nearest tick interval or even division thereof.
-                </p>
-                <p>
                 The default bin width is determined by Scott's binning rule (Scott, 1979).
                 </p>
                 <p>
