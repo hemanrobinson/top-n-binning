@@ -494,13 +494,12 @@ Graph.onMouseUp = ( event, width, height, margin, padding, xScale, yScale, xDoma
 };
 
 /**
- * Returns binned values for a continuous set of values and specified aggregate value.
+ * Returns default aggregate value.
  *
  * @param  {Array[]}     data           data set
  * @param  {number}      columnIndex    index of column to be binned
  * @param  {D3Scale}     xScale         X scale
- * @param  {number}      aggregate      aggregate value, between 0 and 1
- * @return {number[][]}  binned values
+ * @return {number}      default aggregate value, between 0 and 1
  */
 Graph.getDefaultAggregate = ( data, columnIndex, xScale ) => {
     
@@ -526,11 +525,7 @@ Graph.getDefaultAggregate = ( data, columnIndex, xScale ) => {
     let aggregate = 1 - (( domain[ 1 ] - domain[ 0 ]) / binWidth - 1 ) / ( k - 1 );
     
     // Transform the aggregate value.
-    let myAggregate = aggregate;                                    // between 0 and 1
-    myAggregate = aggregate * aggregate * aggregate * aggregate;    // between 0 and 1
-//    myAggregate = Math.exp( myAggregate );                          // between 1 and Math.E
-//    myAggregate -= 1;                                               // between 0 and ( Math.E - 1 )
-//    myAggregate /= ( Math.E - 1 );                                  // between 0 and 1
+    let myAggregate = aggregate * aggregate * aggregate * aggregate;
 
     // Return the aggregate value.
     return myAggregate;
@@ -557,13 +552,13 @@ Graph.getBins = ( data, columnIndex, xScale, aggregate ) => {
     minWidth = Math.max( minWidth, 2 * ( domain[ 1 ] - domain[ 0 ]) / ( range[ 1 ] - range[ 0 ]));
     
     // Transform the aggregate value.
-    let myAggregate = aggregate;                                    // between 0 and 1
-    myAggregate = Math.sqrt( Math.sqrt( aggregate ));               // between 0 and 1
-//    myAggregate *= ( Math.E - 1 );                                  // between 0 and ( Math.E - 1 )
-//    myAggregate += 1;                                               // between 1 and Math.E
-//    myAggregate = Math.log( myAggregate );                          // between 0 and 1
+    // A transformation is needed because otherwise changing the number of bins has a disproportionate effect when there are fewer bins.
+    // I tried a log transform but it did not sufficiently reduce this effect.
+    let myAggregate = Math.sqrt( Math.sqrt( aggregate ));
     
     // Calculate the bin width from the aggregate value.
+    // It would be more consistent to first calculate the ticks, then derive the bin width to match them.
+    // I tried d3.ticks() but it does not produce a sufficient number of distinct bin widths.
     const k = Math.round(( domain[ 1 ] - domain[ 0 ]) / minWidth );
     const d = Math.round( 1 + ( k - 1 ) * ( 1 - myAggregate ));
     let binWidth = ( domain[ 1 ] - domain[ 0 ]) / d;
