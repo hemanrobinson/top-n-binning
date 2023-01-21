@@ -98,34 +98,39 @@ const Graph = React.forwardRef(( props, ref ) => {
 Graph.scrollSize = 15;
     
 /**
- * Returns whether zooming controls are displayed.
+ * Stores whether this graph displays zooming controls for all dimensions.
  *
- * @param  {Object}   ref  reference to DIV
- * @return {boolean}  true iff zooming controls are displayed
+ * @type {Map} references keys and boolean values
  */
-Graph.isZooming = ( ref ) => {
-    return ( ref.current.childNodes[ 1 ].style.display === "inline" );
-};
+Graph.isZooming = new Map();
     
 /**
- * Returns whether binning controls are displayed in the X dimension.
+ * Stores whether this graph displays zooming controls in the X dimension.
  *
- * @param  {Object}   ref  reference to DIV
- * @return {boolean}  true iff binning controls are displayed
+ * @type {Map} references keys and boolean values
  */
-Graph.isXBinning = ( ref ) => {
-    return ( ref.current.childNodes[ 3 ].style.display === "inline" );
-};
+Graph.isXZooming = new Map();
     
 /**
- * Returns whether binning controls are displayed in the Y dimension.
+ * Stores whether this graph displays zooming controls in the Y dimension.
  *
- * @param  {Object}   ref  reference to DIV
- * @return {boolean}  true iff binning controls are displayed
+ * @type {Map} references keys and boolean values
  */
-Graph.isYBinning = ( ref ) => {
-    return ( ref.current.childNodes[ 4 ].style.display === "inline" );
-};
+Graph.isYZooming = new Map();
+    
+/**
+ * Stores whether binning controls are displayed in the X dimension.
+ *
+ * @type {Map} references keys and boolean values
+ */
+Graph.isXBinning = new Map();
+    
+/**
+ * Stores whether binning controls are displayed in the Y dimension.
+ *
+ * @type {Map} references keys and boolean values
+ */
+Graph.isYBinning = new Map();
  
 /**
  * Down event location.
@@ -178,6 +183,8 @@ Graph.getDomains = ( xDomain0, yDomain0, xDomain, yDomain, isXOrdinal, isYOrdina
     
 /**
  * Zooms in one or two dimensions.
+ *
+ * TODO:  Enable and disable zoom buttons.
  *
  * @param   {boolean}  isIn      true iff zooming in, otherwise zooming out
  * @param   {D3Scale}  xScale    X scale (returned)
@@ -265,20 +272,24 @@ Graph.onZoom2D = ( isIn, xScale, yScale, xDomain0, yDomain0, isX, isY ) => {
 /**
  * Initiates zoom in one dimension.
  *
+ * TODO:  Implement d3-zoom.
+ *
  * This method modifies Graph.downLocation.
  *
- * @param  {Event}    event     event
- * @param  {number}   width     width, in pixels
- * @param  {number}   height    height, in pixels
- * @param  {Box}      margin    margin
- * @param  {Box}      padding   padding
- * @param  {number}   xScrollSize scroll size in the X dimension, or 0 for default
- * @param  {D3Scale}  xScale    X scale
- * @param  {D3Scale}  yScale    Y scale
- * @param  {Array}    xDomain0  Initial X domain
- * @param  {Array}    yDomain0  Initial Y domain
+ * @param  {Event}    event         event
+ * @param  {number}   width         width, in pixels
+ * @param  {number}   height        height, in pixels
+ * @param  {Box}      margin        margin
+ * @param  {Box}      padding       padding
+ * @param  {boolean}  isDragging    true iff dragging is supported in both X and Y dimensions
+ * @param  {number}   xScrollSize   scroll size in the X dimension, or <0 if not supported, or 0 for default
+ * @param  {number}   yScrollSize   scroll size in the Y dimension, or <0 if not supported, or 0 for default
+ * @param  {D3Scale}  xScale        X scale
+ * @param  {D3Scale}  yScale        Y scale
+ * @param  {Array}    xDomain0      Initial X domain
+ * @param  {Array}    yDomain0      Initial Y domain
  */
-Graph.onMouseDown = ( event, width, height, margin, padding, xScrollSize, xScale, yScale, xDomain0, yDomain0 ) => {
+Graph.onMouseDown = ( event, width, height, margin, padding, isDragging, xScrollSize, yScrollSize, xScale, yScale, xDomain0, yDomain0 ) => {
 
     // Initialization.
     const scrollSize = Graph.scrollSize,
@@ -552,13 +563,14 @@ Graph.getBins = ( data, columnIndex, xScale, aggregate ) => {
     minWidth = Math.max( minWidth, 2 * ( domain[ 1 ] - domain[ 0 ]) / ( range[ 1 ] - range[ 0 ]));
     
     // Transform the aggregate value.
-    // A transformation is needed because otherwise changing the number of bins has a disproportionate effect when there are fewer bins.
-    // I tried a log transform but it did not sufficiently reduce this effect.
+    // Without a transform, changing the number of bins has a disproportionate effect when there are fewer bins.
+    // I tried a log transform, but it does not sufficiently reduce this effect.
     let myAggregate = Math.sqrt( Math.sqrt( aggregate ));
     
     // Calculate the bin width from the aggregate value.
-    // It would be more consistent to first calculate the ticks, then derive the bin width to match them.
-    // I tried d3.ticks() but it does not produce a sufficient number of distinct bin widths.
+    // TODO:  It would be more consistent to first calculate the ticks, then derive the bin width to match them.
+    // I tried d3.ticks(), but it does not produce enough distinct bin widths.
+    // A custom ticks() method could generate e.g. [ 1, 2, 4, 5, 8... ].
     const k = Math.round(( domain[ 1 ] - domain[ 0 ]) / minWidth );
     const d = Math.round( 1 + ( k - 1 ) * ( 1 - myAggregate ));
     let binWidth = ( domain[ 1 ] - domain[ 0 ]) / d;
@@ -581,20 +593,21 @@ Graph.getBins = ( data, columnIndex, xScale, aggregate ) => {
 /**
  * Draws the axes.
  *
- * @param  {Object}   ref         reference to DIV
- * @param  {number}   width       width, in pixels
- * @param  {number}   height      height, in pixels
- * @param  {Box}      margin      margin
- * @param  {Box}      padding     padding
- * @param  {number}   xScrollSize scroll size in the X dimension, or 0 for default
- * @param  {D3Scale}  xScale      X scale
- * @param  {D3Scale}  yScale      Y scale
- * @param  {Array}    xDomain0    Initial X domain
- * @param  {Array}    yDomain0    Initial Y domain
- * @param  {string}   xLabel      X axis label
- * @param  {string}   yLabel      Y axis label
+ * @param  {Object}   ref           reference to DIV
+ * @param  {number}   width         width, in pixels
+ * @param  {number}   height        height, in pixels
+ * @param  {Box}      margin        margin
+ * @param  {Box}      padding       padding
+ * @param  {number}   xScrollSize   scroll size in the X dimension, or <0 if not supported, or 0 for default
+ * @param  {number}   yScrollSize   scroll size in the Y dimension, or <0 if not supported, or 0 for default
+ * @param  {D3Scale}  xScale        X scale
+ * @param  {D3Scale}  yScale        Y scale
+ * @param  {Array}    xDomain0      Initial X domain
+ * @param  {Array}    yDomain0      Initial Y domain
+ * @param  {string}   xLabel        X axis label
+ * @param  {string}   yLabel        Y axis label
  */
-Graph.drawAxes = ( ref, width, height, margin, padding, xScrollSize, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel ) => {
+Graph.drawAxes = ( ref, width, height, margin, padding, xScrollSize, yScrollSize, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel ) => {
     
     // Initialization.
     const svg = d3.select( ref.current.childNodes[ 0 ]),
@@ -652,24 +665,26 @@ Graph.drawAxes = ( ref, width, height, margin, padding, xScrollSize, xScale, ySc
 /**
  * Draws the controls.
  *
- * @param  {Object}   ref         reference to DIV
- * @param  {number}   width       width, in pixels
- * @param  {number}   height      height, in pixels
- * @param  {Box}      margin      margin
- * @param  {Box}      padding     padding
- * @param  {number}   xScrollSize scroll size in the X dimension, or 0 for default
- * @param  {boolean}  isXZooming  true iff this graph can be zoomed in the X dimension
- * @param  {boolean}  isYZooming  true iff this graph can be zoomed in the Y dimension
- * @param  {boolean}  isXBinning  true iff this graph can be binned in the X dimension
- * @param  {boolean}  isYBinning  true iff this graph can be binned in the Y dimension
- * @param  {D3Scale}  xScale      X scale
- * @param  {D3Scale}  yScale      Y scale
- * @param  {Array}    xDomain0    Initial X domain
- * @param  {Array}    yDomain0    Initial Y domain
- * @param  {string}   xLabel      X axis label
- * @param  {string}   yLabel      Y axis label
+ * @param  {Object}   ref           reference to DIV
+ * @param  {number}   width         width, in pixels
+ * @param  {number}   height        height, in pixels
+ * @param  {Box}      margin        margin
+ * @param  {Box}      padding       padding
+ * @param  {number}   xScrollSize   scroll size in the X dimension, or <0 if not supported, or 0 for default
+ * @param  {number}   yScrollSize   scroll size in the Y dimension, or <0 if not supported, or 0 for default
+ * @param  {boolean}  isZooming     true iff this graph can be zoomed in all dimensions
+ * @param  {boolean}  isXZooming    true iff this graph can be zoomed in the X dimension
+ * @param  {boolean}  isYZooming    true iff this graph can be zoomed in the Y dimension
+ * @param  {boolean}  isXBinning    true iff this graph can be binned in the X dimension
+ * @param  {boolean}  isYBinning    true iff this graph can be binned in the Y dimension
+ * @param  {D3Scale}  xScale        X scale
+ * @param  {D3Scale}  yScale        Y scale
+ * @param  {Array}    xDomain0      Initial X domain
+ * @param  {Array}    yDomain0      Initial Y domain
+ * @param  {string}   xLabel        X axis label
+ * @param  {string}   yLabel        Y axis label
  */
-Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, isXZooming, isYZooming, isXBinning, isYBinning, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel ) => {
+Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, yScrollSize, isZooming, isXZooming, isYZooming, isXBinning, isYBinning, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel ) => {
     
     // Initialization.
     const svg = d3.select( ref.current.childNodes[ 0 ]),
@@ -797,7 +812,7 @@ Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, isXZoom
     }
     
     // ...or hide the X zoombar.
-    else if( !xScrollSize ) {
+    else if( !xScrollSize && ( isXZooming !== !!Graph.isXZooming.get( ref ))) {
         svg.append( "rect" )
             .attr( "x", x )
             .attr( "y", height - scrollSize )
@@ -805,13 +820,24 @@ Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, isXZoom
             .attr( "height", scrollSize )
             .style( "fill", colorLight );
     }
+        
+    // Draw the Y scroll bar.
+    let y1 = y + h * ( 1 - ( yMin - yMin0      ) / ( yMax0 - yMin0 + yD )),
+        y2 = y + h * ( 1 - ( yMax - yMin0 + yD ) / ( yMax0 - yMin0 + yD ));
+    if( yScrollSize ) {
+        svg.append( "rect" )
+            .attr( "x", 0 )
+            .attr( "y", y1 )
+            .attr( "width", width - xScrollSize )
+            .attr( "height", y2 - y1 )
+            .attr( "opacity","0.5" )
+            .style( "fill", colorLine );
+     }
     
     // Draw the Y zoombar...
     if( isYZooming ) {
         
         // Draw the Y scrollbar.
-        let y1 = y + h * ( 1 - ( yMin - yMin0      ) / ( yMax0 - yMin0 + yD )),
-            y2 = y + h * ( 1 - ( yMax - yMin0 + yD ) / ( yMax0 - yMin0 + yD ));
         svg.append( "rect" )
             .attr( "x", 0 )
             .attr( "y", y )
@@ -879,7 +905,7 @@ Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, isXZoom
     }
     
     // ...or hide the Y zoombar.
-    else {
+    else if( !yScrollSize && ( isYZooming !== !!Graph.isYZooming.get( ref ))) {
         svg.append( "rect" )
             .attr( "x", 0 )
             .attr( "y", y )
@@ -888,18 +914,26 @@ Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, isXZoom
             .style( "fill", colorLight );
     }
 
-    // Show or hide the buttons and sliders.
-    if(( isXZooming || isYZooming ) !== Graph.isZooming( ref )) {
-        for( let i = 1; ( i < 3 ); i++ ) {
-            ref.current.childNodes[ i ].style.display = (( isXZooming || isYZooming ) ? "inline" : "none" );
-        }
+    // Show or hide the buttons.
+    if( isZooming !== !!Graph.isZooming.get( ref )) {
+        ref.current.childNodes[ 1 ].style.display = (( isZooming ) ? "inline" : "none" );
+        ref.current.childNodes[ 2 ].style.display = (( isZooming ) ? "inline" : "none" );
     }
-    if( isXBinning !== Graph.isXBinning( ref )) {
+
+    // Show or hide the sliders.
+    if( isXBinning !== !!Graph.isXBinning.get( ref )) {
         ref.current.childNodes[ 3 ].style.display = ( isXBinning ? "inline" : "none" );
     }
-    if( isYBinning !== Graph.isYBinning( ref )) {
+    if( isYBinning !== !!Graph.isYBinning.get( ref )) {
         ref.current.childNodes[ 4 ].style.display = ( isYBinning ? "inline" : "none" );
     }
+    
+    // Record the new ztates.
+    Graph.isZooming.set( ref, isZooming );
+    Graph.isXZooming.set( ref, isXZooming );
+    Graph.isYZooming.set( ref, isYZooming );
+    Graph.isXBinning.set( ref, isXBinning );
+    Graph.isYBinning.set( ref, isYBinning );
 };
 
 export default Graph;
