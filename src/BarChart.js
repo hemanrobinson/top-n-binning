@@ -47,12 +47,11 @@ const BarChart = ( props ) => {
         setXAggregate( value );
     };
 
-    // Calculate the bars.
+    // Calculate the bars and sort them.
     bars = Array.from( d3.rollup( data, v => d3.sum( v, d => d[ 1 ]), d => d[ 0 ]));
     bars.sort(( a, b ) => ( b[ 1 ] - a[ 1 ]));
     
     // Combine bars if requested.
-    // TODO: Don't assume that the bars are sorted.
     let n = Math.round( xAggregate * bars.length );
     if( 1 < n ) {
         let total = 0;

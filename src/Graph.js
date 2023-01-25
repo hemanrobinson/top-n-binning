@@ -568,9 +568,7 @@ Graph.getBins = ( data, columnIndex, xScale, aggregate ) => {
     let myAggregate = Math.sqrt( Math.sqrt( aggregate ));
     
     // Calculate the bin width from the aggregate value.
-    // TODO:  It would be more consistent to first calculate the ticks, then derive the bin width to match them.
-    // I tried d3.ticks(), but it does not produce enough distinct bin widths.
-    // A custom ticks() method could generate e.g. [ 1, 2, 4, 5, 8... ].
+    // TODO:  It would be more consistent to first calculate the axis ticks, then derive the bin width to match them.
     const k = Math.round(( domain[ 1 ] - domain[ 0 ]) / minWidth );
     const d = Math.round( 1 + ( k - 1 ) * ( 1 - myAggregate ));
     let binWidth = ( domain[ 1 ] - domain[ 0 ]) / d;

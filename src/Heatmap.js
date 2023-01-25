@@ -47,11 +47,11 @@ const Heatmap = ( props ) => {
         .domain( xDomain )
         .nice();
     
-    // Get the unique Y values.
-    let values = Array.from( d3.rollup( data, v => v.length, d => d[ yIndex ]));
-    values.sort(( a, b ) => ( b[ 0 ] - a[ 0 ]));
+    // Get the unique Y values and sort them.
+    let values = Array.from( d3.rollup( data, v => d3.sum( v, d => d[ zIndex ]), d => d[ yIndex ]));
+    values.sort(( a, b ) => ( b[ 1 ] - a[ 1 ]));
     yDomain0 = values.map( x => x[ 0 ]);
-        
+    
     // Get the Y scale.
     const [ yDomain, setYDomain ] = useState( yDomain0 );
     yScale = d3.scaleBand().domain( yDomain ).range([ height - bottom, top ]);
@@ -74,8 +74,12 @@ const Heatmap = ( props ) => {
     // Calculate the X bins.
     bins = Graph.getBins( data, xIndex, xScale, xAggregate );
     
-    // Count the number of values in each tile.
+    // Calculate the tiles and sort them.
     tiles = [];
+    for( let i = 0; ( i < yDomain0.length ); i++ ) {
+        tiles[ i ] = [];
+    }
+    let j = 0;
     bins.forEach(( bin ) => {
         let t = [];
         for( let i = 0; ( i < yDomain0.length ); i++ ) {
@@ -85,11 +89,23 @@ const Heatmap = ( props ) => {
             let k = yDomain0.indexOf( b[ yIndex ]);
             t[ k ] += b[ zIndex ];
         })
-        tiles = tiles.concat( t );
+        for( let i = 0; ( i < yDomain0.length ); i++ ) {
+            tiles[ i ][ j ] = t[ i ];
+        }
+        j++;
     });
+    tiles.sort(( a, b ) => ( d3.sum( b ) - d3.sum( a )));
+    
+    // Flatten the tiles into one Array for drawing.
+    let myTiles = [];
+    for( let i = 0; ( i < tiles.length ); i++ ) {
+        for( let j = 0; ( j < bins.length ); j++ ) {
+            myTiles[ i + j * tiles.length ] = tiles[ i ][ j ];
+        }
+    }
+    tiles = myTiles;
     
     // Combine tiles if requested.
-    // TODO: Don't assume that the tiles are sorted.
     let n = Math.round( yAggregate * yDomain0.length );
     if( 1 < n ) {
         for( let j = bins.length; ( j > 0 ); j-- ) {
