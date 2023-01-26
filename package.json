@@ -5,7 +5,7 @@
   "homepage": "https://hemanrobinson.github.io/bin",
   "dependencies": {
     "@material-ui/core": "^4.11.2",
-    "@testing-library/jest-dom": "^5.11.6",
+    "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^11.2.2",
     "@testing-library/user-event": "^12.6.0",
     "d3": "^7.8.0",
@@ -17,7 +17,9 @@
     "web-vitals": "^0.2.4"
   },
   "jest": {
-    "transformIgnorePatterns": ["/node_modules/(?!d3|d3-array|internmap|delaunator|robust-predicates)"]
+    "transformIgnorePatterns": [
+      "/node_modules/(?!d3|d3-array|internmap|delaunator|robust-predicates)"
+    ]
   },
   "scripts": {
     "predeploy": "npm run build",
