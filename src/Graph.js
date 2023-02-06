@@ -1,6 +1,6 @@
 import React from 'react';
 import * as d3 from 'd3';
-import { Button, Slider } from '@material-ui/core';
+import { Button, Slider } from '@mui/material';
 import './Graph.css';
 
 /**
