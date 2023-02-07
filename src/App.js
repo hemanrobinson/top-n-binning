@@ -17,7 +17,7 @@ const App = () => {
                 <a href="https://www.cs.umd.edu/users/ben/">Ben Shneiderman</a> taught us all to <a href="https://www.perceptualedge.com/articles/b-eye/path_to_visual_discovery.pdf">"Overview first, zoom and filter, then details-on-demand"</a> (Shneiderman, 1996).
                 </p>
                 <p className="center">
-                    <a href="https://www.cs.umd.edu/users/ben/"><img alt="Dr. Ben Shneiderman" src={shneiderman}/></a>
+                    <a href="https://www.cs.umd.edu/users/ben/"><img title="Dr. Ben Shneiderman" alt="Dr. Ben Shneiderman" src={shneiderman}/></a>
                 </p>
                 <p>
                 Does "zooming" include binning?  In graphs of aggregated data, zooming the scales may not help us explore.  Adjusting the bins often can.
