@@ -70,6 +70,14 @@ const Graph = React.forwardRef(( props, ref ) => {
         right  = margin.right  + padding.right,
         bottom = margin.bottom + padding.bottom,
         left   = margin.left   + padding.left;
+
+    // Check for invalid values (only seen from unit tests).
+    if( Number.isNaN( xAggregate )) {
+        xAggregate = 0;
+    }
+    if( Number.isNaN( yAggregate )) {
+        yAggregate = 0;
+    }
     
     // Return the component.
     // Using "value" instead of "defaultValue" below suppresses a warning.
@@ -505,7 +513,7 @@ Graph.onMouseUp = ( event, width, height, margin, padding, xScale, yScale, xDoma
 };
 
 /**
- * Returns default aggregate value.
+ * Returns default aggregate value using Scott's rule.
  *
  * @param  {Array[]}     data           data set
  * @param  {number}      columnIndex    index of column to be binned
@@ -527,7 +535,7 @@ Graph.getDefaultAggregate = ( data, columnIndex, xScale ) => {
     let values = [];
     data.forEach( d => values.push( d[ columnIndex ]));
     
-    // Get the initial bin width from Scott's rule.
+    // Get the initial bin width using Scott's rule.
     let bins = d3.bin().thresholds( d3.thresholdScott )( values );
     let binWidth = ( domain[ 1 ] - domain[ 0 ]) / bins.length;
     
@@ -543,15 +551,15 @@ Graph.getDefaultAggregate = ( data, columnIndex, xScale ) => {
 };
 
 /**
- * Returns binned values for a continuous set of values and specified aggregate value.
+ * Returns bin thresholds for a continuous set of values and specified aggregate value.
  *
  * @param  {Array[]}     data           data set
  * @param  {number}      columnIndex    index of column to be binned
  * @param  {D3Scale}     xScale         X scale
  * @param  {number}      aggregate      aggregate value, between 0 and 1
- * @return {number[][]}  binned values
+ * @return {number[][]}  bin thresholds
  */
-Graph.getBins = ( data, columnIndex, xScale, aggregate ) => {
+Graph.getThresholds = ( data, columnIndex, xScale, aggregate ) => {
     
     // Get the scale information.
     const ticks = xScale.ticks();
@@ -560,32 +568,42 @@ Graph.getBins = ( data, columnIndex, xScale, aggregate ) => {
     
     // Ensure that the minimum bin width is visible.
     let minWidth = ( ticks[ 1 ] - ticks[ 0 ]) / 16;
-    minWidth = Math.max( minWidth, 2 * ( domain[ 1 ] - domain[ 0 ]) / ( range[ 1 ] - range[ 0 ]));
+    minWidth = Math.max( minWidth, 4 * ( domain[ 1 ] - domain[ 0 ]) / ( range[ 1 ] - range[ 0 ]));
     
     // Transform the aggregate value.
     // Without a transform, changing the number of bins has a disproportionate effect when there are fewer bins.
-    // I tried a log transform, but it does not sufficiently reduce this effect.
+    // I tried a log transform, but that does not sufficiently reduce this effect.
     let myAggregate = Math.sqrt( Math.sqrt( aggregate ));
     
     // Calculate the bin width from the aggregate value.
-    // TODO:  It would be more consistent to first calculate the axis ticks, then derive the bin width to match them.
     const k = Math.round(( domain[ 1 ] - domain[ 0 ]) / minWidth );
     const d = Math.round( 1 + ( k - 1 ) * ( 1 - myAggregate ));
     let binWidth = ( domain[ 1 ] - domain[ 0 ]) / d;
 
-    // Calculate the thresholds.
-    let thresholds = [];
-    const nBins = ( domain[ 1 ] - domain[ 0 ]) / binWidth;
-    for( let i = 0; ( i < nBins ); i++ ) {
-        thresholds.push( ticks[ 0 ] + i * binWidth );
+    // Calculate the nearest "nice" tick step.
+    let mag = Math.floor( Math.log10( binWidth ));
+    const pow = Math.pow( 10, mag );
+    const m = [ 1, 2, 4, 5, 8 ];
+    let niceStep = Number.POSITIVE_INFINITY;
+    for( let i = 0; ( i < m.length ); i++ ) {
+        if( Math.abs( binWidth - pow * m[ i ]) < Math.abs( binWidth - niceStep )) {
+            niceStep = pow * m[ i ];
+        }
     }
-
-    // Return the bins.
-    const histogram = d3.histogram()
-        .value( d => d[ columnIndex ])
-        .domain( domain )
-        .thresholds( thresholds );
-    return histogram( data );
+    
+    // Return the thresholds.
+    let thresholds = [];
+    if( aggregate > 0.95 ) {
+        const epsilon = 1000 * Number.EPSILON * ( domain[ 1 ] - domain[ 0 ]);
+        thresholds = [ d3.min( data, d => d[ columnIndex ]), ( 1 + epsilon ) * d3.max( data, d => d[ columnIndex ])];
+    } else {
+        const minStep = niceStep * Math.floor( domain[ 0 ] / niceStep ),
+            maxStep = niceStep * Math.floor( domain[ 1 ] / niceStep );
+        for( let step = minStep; ( step <= maxStep ); step += niceStep ) {
+            thresholds.push( step );
+        }
+    }
+    return thresholds;
 };
     
 /**
@@ -604,8 +622,10 @@ Graph.getBins = ( data, columnIndex, xScale, aggregate ) => {
  * @param  {Array}    yDomain0      Initial Y domain
  * @param  {string}   xLabel        X axis label
  * @param  {string}   yLabel        Y axis label
+ * @param  {number[]} xThresholds   bin thresholds in the X dimension, or undefined for none
+ * @param  {number[]} yThresholds   bin thresholds in the Y dimension, or undefined for none
  */
-Graph.drawAxes = ( ref, width, height, margin, padding, xScrollSize, yScrollSize, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel ) => {
+Graph.drawAxes = ( ref, width, height, margin, padding, xScrollSize, yScrollSize, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel, xThresholds, yThresholds ) => {
     
     // Initialization.
     const svg = d3.select( ref.current.childNodes[ 0 ]),
@@ -637,12 +657,67 @@ Graph.drawAxes = ( ref, width, height, margin, padding, xScrollSize, yScrollSize
         .attr( "width", margin.left )
         .attr( "height", height + xScrollSize )
         .style( "fill", colorLight );
+
+    // Get the tick values from the thresholds.
+    let xTickValues = null;
+    let xTickFormat = null;
+    if( xThresholds ) {
+
+        // Add or remove one tick at the end if needed.
+        const n = xThresholds.length,
+            nextTickValue = xThresholds[ n - 1 ] + xThresholds[ n - 1 ] - xThresholds[ n - 2 ],
+            xValues = xThresholds.concat();
+        if( nextTickValue <= xScale.domain()[ 1 ]) {
+            xValues.push( nextTickValue );
+        }
+        if( xValues[ 0 ] < xScale.domain()[ 0 ]) {
+            xValues.splice( 0, 1 );
+        }
+
+        // Thin the X tick values if needed to ensure minimum pixels per value.
+        const nTickValues = xValues.length;
+        const nMaxValues = Math.round(( xScale.range()[ 1 ] - xScale.range()[ 0 ]) / 40 );
+        let inc = 1;
+        let divisors = [ 1, 2, 4, 5, 8 ];
+        let i = 0;
+        let m = 1;
+        while( nTickValues / inc > nMaxValues ) {
+            inc = divisors[ i ] * m;
+            i++;
+            if( i >= divisors.length ) {
+                i = 0;
+                m *= 10;
+            }
+        }
+        xTickValues = [];
+        for( let i = 0; ( i < nTickValues ); i += inc ) {
+            xTickValues.push( xValues[ i ]);
+        }
+
+        // Get the precision.
+        let step = xTickValues[ 1 ] - xTickValues[ 0 ];
+        let precision = d3.precisionFixed( step );
+        step *= Math.pow( 10, precision );
+        const epsilon = 1000 * Number.EPSILON * step;
+        if( step - Math.floor( step + epsilon ) > .01 ) {   // TODO:  This works around a possible bug in d3.precisionFixed.
+            precision++;
+        }
+
+        // Get the tick format.
+        const s = d3.formatSpecifier( "f" );
+        s.precision = precision;
+        xTickFormat = d3.format( s );
+    }
+    
+    // TODO:  Similarly for Y.
+    let yTickValues = null;
+    let yTickFormat = null;
     
     // Draw the X axis.
     svg.append( "g" )
         .attr( "class", ( margin.bottom > 50 ) ? "axisRotated" : "axis" )
         .attr( "transform", "translate( 0, " + ( height - margin.bottom ) + " )" )
-        .call( d3.axisBottom( xScale ).ticks( 3 ).tickFormat( t => ( "" + t )));
+        .call( d3.axisBottom( xScale ).tickSizeOuter( 0 ).ticks( 3 ).tickValues( xTickValues ).tickFormat( xTickFormat ));
     svg.append( "text" )
         .attr( "transform", "translate( " + ( width / 2 ) + " ," + ( height - 1.5 * scrollSize ) + ")" )
         .style( "text-anchor", "middle" )
@@ -652,7 +727,7 @@ Graph.drawAxes = ( ref, width, height, margin, padding, xScrollSize, yScrollSize
     svg.append( "g" )
         .attr( "class", "axis" )
         .attr( "transform", "translate( " + margin.left + ", 0 )" )
-        .call( d3.axisLeft( yScale ).ticks( 3 ).tickFormat( t => ( "" + t )));
+        .call( d3.axisLeft( yScale ).tickSizeOuter( 0 ).ticks( 3 ).tickValues( yTickValues ).tickFormat( yTickFormat ));
     svg.append( "text" )
         .attr( "x", margin.left )
         .attr( "y", margin.top + padding.top * 0.7 )

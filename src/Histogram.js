@@ -29,11 +29,18 @@ const Histogram = ( props ) => {
         xLabel = Data.getColumnNames( dataSet )[ columnIndex ],
         yLabel = "Frequency",
         data = Data.getValues( dataSet ),
-        xDomain0 = [ d3.min( data, d => d[ columnIndex ]), d3.max( data, d => d[ columnIndex ])],
+        xDomain0,
         yDomain0,
         xScale,
         yScale,
         bins;
+        
+    // Get the X domain.
+    // TODO:  Calculate margins based on minimum and maximum thresholds.
+    const xMin = d3.min( data, d => d[ columnIndex ]),
+        xMax = d3.max( data, d => d[ columnIndex ]),
+        xMargin = 0.1 * ( xMax - xMin );
+    xDomain0 = [ xMin - xMargin, xMax + xMargin ];
         
     // Get the X scale.
     const [ xDomain, setXDomain ] = useState( xDomain0 );
@@ -51,7 +58,12 @@ const Histogram = ( props ) => {
     };
     
     // Calculate the X bins.
-    bins = Graph.getBins( data, columnIndex, xScale, xAggregate );
+    const thresholds = Graph.getThresholds( data, columnIndex, xScale, xAggregate );
+    const histogram = d3.histogram()
+        .value( d => d[ columnIndex ])
+        .domain( xScale.domain())
+        .thresholds( thresholds );
+    bins = histogram( data );
 
     // Get the Y scale.
     yDomain0 = [ 0, 1.05 * d3.max( bins, d => d.length )];      // a 5% margin
@@ -62,7 +74,7 @@ const Histogram = ( props ) => {
     // Zooms in two dimensions.
     let onZoom2D = ( isIn ) => {
         Graph.onZoom2D( isIn, xScale, yScale, xDomain0, yDomain0, false, true );
-        Histogram.draw( ref, width, height, margin, padding, false, true, false, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel, bins );
+        Histogram.draw( ref, width, height, margin, padding, false, true, false, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel, thresholds, bins );
     };
     
     // Zooms in one dimension.
@@ -72,7 +84,7 @@ const Histogram = ( props ) => {
     onMouseUp = ( event ) => {
         if( Graph.downLocation.isX || Graph.downLocation.isY ) {
             Graph.onMouseUp( event, width, height, margin, padding, xScale, yScale, xDomain0, yDomain0 );
-            Histogram.draw( ref, width, height, margin, padding, false, true, false, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel, bins );
+            Histogram.draw( ref, width, height, margin, padding, false, true, false, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel, thresholds, bins );
         }
     };
     
@@ -89,7 +101,7 @@ const Histogram = ( props ) => {
     
     // Set hook to draw on mounting or any state change.
     useEffect(() => {
-        Histogram.draw( ref, width, height, margin, padding, false, Graph.isXBinning.get( ref ), Graph.isYBinning.get( ref ), xScale, yScale, xDomain0, yDomain0, xLabel, yLabel, bins );
+        Histogram.draw( ref, width, height, margin, padding, false, Graph.isXBinning.get( ref ), Graph.isYBinning.get( ref ), xScale, yScale, xDomain0, yDomain0, xLabel, yLabel, thresholds, bins );
     });
     
     // Return the component.
@@ -114,9 +126,10 @@ const Histogram = ( props ) => {
  * @param  {Array}    yDomain0     Initial Y domain
  * @param  {string}   xLabel       X axis label
  * @param  {string}   yLabel       Y axis label
- * @param  {Array}    bins         bins
+ * @param  {number[]} thresholds   bin thresholds
+ * @param  {number[]} bins         bins
  */
-Histogram.draw = ( ref, width, height, margin, padding, isZooming, isXBinning, isYBinning, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel, bins ) => {
+Histogram.draw = ( ref, width, height, margin, padding, isZooming, isXBinning, isYBinning, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel, thresholds, bins ) => {
     
     // Initialization.
     const svg = d3.select( ref.current.childNodes[ 0 ]);
@@ -134,7 +147,7 @@ Histogram.draw = ( ref, width, height, margin, padding, isZooming, isXBinning, i
         .style( "fill", "#99bbdd" );
     
     // Draw the axes and the controls.
-    Graph.drawAxes(     ref, width, height, margin, padding, 0, 0, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel );
+    Graph.drawAxes(     ref, width, height, margin, padding, 0, 0, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel, thresholds );
     Graph.drawControls( ref, width, height, margin, padding, 0, 0, isZooming, isZooming, isZooming, isXBinning, isYBinning, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel );
 };
 

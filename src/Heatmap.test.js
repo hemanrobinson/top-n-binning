@@ -27,7 +27,7 @@ it( "creates a Heatmap element", () => {
     
     // Test first render and componentDidMount.
     act(() => {
-        render( <Heatmap width="400" height="400" />, container );
+        render( <Heatmap width="400" height="400"/>, container );
     });
     
     // Test structure.
@@ -61,5 +61,5 @@ it( "draws the Heatmap", () => {
         padding = { top: 0, right: 0, bottom: 0, left: 0 },
         xScale = d3.scaleLinear().domain([ 0, 1 ]).range([ 0, 100 ]),
         yScale = d3.scaleLinear().domain([ 0, 1 ]).range([ 0, 100 ]);
-    Heatmap.draw( ref, 400, 400, margin, padding, false, false, false, xScale, yScale, [ 0, 1 ], [ 0, 1 ], "X", "Y", [], []);
+    Heatmap.draw( ref, 400, 400, margin, padding, false, false, false, xScale, yScale, [ 0, 1 ], [ 0, 1 ], "X", "Y", [], [], []);
 });

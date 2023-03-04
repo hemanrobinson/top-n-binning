@@ -33,12 +33,19 @@ const Heatmap = ( props ) => {
         xLabel = Data.getColumnNames( dataSet )[ xIndex ],
         yLabel = Data.getColumnNames( dataSet )[ yIndex ],
         data = Data.getValues( dataSet ),
-        xDomain0 = [ d3.min( data, d => d[ xIndex ]), d3.max( data, d => d[ xIndex ])],
+        xDomain0,
         yDomain0,
         xScale,
         yScale,
         bins,
         tiles;
+    
+    // Get the X domain.
+    // TODO:  Calculate margins based on minimum and maximum thresholds.
+    const xMin = d3.min( data, d => d[ xIndex ]),
+        xMax = d3.max( data, d => d[ xIndex ]),
+        xMargin = 0.1 * ( xMax - xMin );
+    xDomain0 = [( Math.abs( xMin ) < xMargin ) ? xMin : xMin - xMargin, xMax + xMargin ];
         
     // Get the X scale.
     const [ xDomain, setXDomain ] = useState( xDomain0 );
@@ -72,7 +79,12 @@ const Heatmap = ( props ) => {
     };
     
     // Calculate the X bins.
-    bins = Graph.getBins( data, xIndex, xScale, xAggregate );
+    const thresholds = Graph.getThresholds( data, xIndex, xScale, xAggregate );
+    const histogram = d3.histogram()
+        .value( d => d[ xIndex ])
+        .domain( xScale.domain())
+        .thresholds( thresholds );
+    bins = histogram( data );
     
     // Calculate the tiles and sort them.
     tiles = [];
@@ -124,7 +136,7 @@ const Heatmap = ( props ) => {
     // Zoom in two dimensions.
     let onZoom2D = ( isIn ) => {
         Graph.onZoom2D( isIn, xScale, yScale, xDomain0, yDomain0, false, true );
-        Heatmap.draw( ref, width, height, margin, padding, false, true, true, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel, bins, tiles );
+        Heatmap.draw( ref, width, height, margin, padding, false, true, true, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel, thresholds, bins, tiles );
     };
     
     // Zoom in one dimension.
@@ -137,7 +149,7 @@ const Heatmap = ( props ) => {
                 yUp = event.nativeEvent.offsetY,
                 isBinning = (( 0 <= xUp ) && ( xUp < width ) && ( 0 <= yUp ) && ( yUp < height ));
             Graph.onMouseUp( event, width, height, margin, padding, xScale, yScale, xDomain0, yDomain0 );
-            Heatmap.draw( ref, width, height, margin, padding, false, isBinning, isBinning, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel, bins, tiles );
+            Heatmap.draw( ref, width, height, margin, padding, false, isBinning, isBinning, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel, thresholds, bins, tiles );
         }
     };
     
@@ -154,7 +166,7 @@ const Heatmap = ( props ) => {
     
     // Set hook to draw on mounting or any state change.
     useEffect(() => {
-        Heatmap.draw( ref, width, height, margin, padding, Graph.isZooming.get( ref ), Graph.isXBinning.get( ref ), Graph.isYBinning.get( ref ), xScale, yScale, xDomain0, yDomain0, xLabel, yLabel, bins, tiles );
+        Heatmap.draw( ref, width, height, margin, padding, Graph.isZooming.get( ref ), Graph.isXBinning.get( ref ), Graph.isYBinning.get( ref ), xScale, yScale, xDomain0, yDomain0, xLabel, yLabel, thresholds, bins, tiles );
     });
     
     // Return the component.
@@ -180,10 +192,11 @@ const Heatmap = ( props ) => {
  * @param  {Array}    yDomain0     Initial Y domain
  * @param  {string}   xLabel       X axis label
  * @param  {string}   yLabel       Y axis label
- * @param  {Array}    bins         bins
+ * @param  {number[]} thresholds   bin thresholds
+ * @param  {number[]} bins         bins
  * @param  {number[]} tiles        tiles
  */
-Heatmap.draw = ( ref, width, height, margin, padding, isZooming, isXBinning, isYBinning, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel, bins, tiles ) => {
+Heatmap.draw = ( ref, width, height, margin, padding, isZooming, isXBinning, isYBinning, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel, thresholds, bins, tiles ) => {
     
     // Initialization.
     const svg = d3.select( ref.current.childNodes[ 0 ]);
@@ -203,7 +216,7 @@ Heatmap.draw = ( ref, width, height, margin, padding, isZooming, isXBinning, isY
         .style( "fill", ( d ) => colorScale( d ));
         
     // Draw the axes and the controls.
-    Graph.drawAxes(     ref, width, height, margin, padding, 0, 0, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel );
+    Graph.drawAxes(     ref, width, height, margin, padding, 0, 0, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel, thresholds );
     Graph.drawControls( ref, width, height, margin, padding, 0, 0, isZooming, isZooming, isZooming, isXBinning, isYBinning, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel );
 };
 
