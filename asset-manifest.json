@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/bin/static/css/main.4d1a6209.css",
-    "main.js": "/bin/static/js/main.76e18213.js",
+    "main.css": "/bin/static/css/main.52b26fbb.css",
+    "main.js": "/bin/static/js/main.3aff8bed.js",
     "static/media/shneiderman.png": "/bin/static/media/shneiderman.6b541fe6b853fed27c7e.png",
     "index.html": "/bin/index.html",
-    "main.4d1a6209.css.map": "/bin/static/css/main.4d1a6209.css.map",
-    "main.76e18213.js.map": "/bin/static/js/main.76e18213.js.map"
+    "main.52b26fbb.css.map": "/bin/static/css/main.52b26fbb.css.map",
+    "main.3aff8bed.js.map": "/bin/static/js/main.3aff8bed.js.map"
   },
   "entrypoints": [
-    "static/css/main.4d1a6209.css",
-    "static/js/main.76e18213.js"
+    "static/css/main.52b26fbb.css",
+    "static/js/main.3aff8bed.js"
   ]
 }
