@@ -38,11 +38,11 @@ it( "creates a Histogram element", () => {
     expect( svg.nodeName ).toBe( "svg" );
     
     // Test mouse events.
-    svg.dispatchEvent( new MouseEvent( "mousedown", { bubbles: true }));
+    svg.dispatchEvent( new MouseEvent( "pointerdown", { bubbles: true }));
     Graph.downLocation.isX = true;
-    svg.dispatchEvent( new MouseEvent( "mouseup", { bubbles: true }));
+    svg.dispatchEvent( new MouseEvent( "pointerup", { bubbles: true }));
     Graph.downLocation.isX = false;
-    svg.dispatchEvent( new MouseEvent( "mouseup", { bubbles: true }));
+    svg.dispatchEvent( new MouseEvent( "pointerup", { bubbles: true }));
 });
 
 it( "draws the Histogram", () => {

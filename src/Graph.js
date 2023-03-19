@@ -1,6 +1,6 @@
 import React from 'react';
 import * as d3 from 'd3';
-import { Button, Slider } from '@mui/material';
+import { Slider } from '@mui/material';
 import './Graph.css';
 
 /**
@@ -64,8 +64,8 @@ import './Graph.css';
 const Graph = React.forwardRef(( props, ref ) => {
     
     // Initialization.
-    const buttonSize = 30, sliderOffset = 12;
-    let { width, height, margin, padding, onMouseDown, onMouseUp, onMouseOver, onMouseOut, onZoom, xAggregate, yAggregate, onXAggregate, onYAggregate } = props,
+    const sliderOffset = 12;
+    let { width, height, margin, padding, onPointerDown, onPointerUp, onPointerOver, onPointerOut, xAggregate, yAggregate, onXAggregate, onYAggregate } = props,
         top    = margin.top    + padding.top,
         right  = margin.right  + padding.right,
         bottom = margin.bottom + padding.bottom,
@@ -82,13 +82,7 @@ const Graph = React.forwardRef(( props, ref ) => {
     // Return the component.
     // Using "value" instead of "defaultValue" below suppresses a warning.
     return <div style={{width: width, height: height}} className="parent" ref={ref}>
-        <svg width={width} height={height} onMouseDown={onMouseDown} onMouseMove={onMouseUp} onMouseUp={onMouseUp} onMouseOver={onMouseOver} onMouseOut={onMouseOut} />
-        <Button variant="contained" onClick={()=>onZoom(true )}
-            style={{ position: "absolute", padding: 0, minWidth: buttonSize, width: buttonSize, height: buttonSize, top: ( height + 1 - buttonSize ), left: 1,
-            display: "none" }}>+</Button>
-        <Button variant="contained" onClick={()=>onZoom(false)}
-            style={{ position: "absolute", padding: 0, minWidth: buttonSize, width: buttonSize, height: buttonSize, top: ( height + 1 - buttonSize ), left: 1 + buttonSize,
-            display: "none" }}>-</Button>
+        <svg width={width} height={height} onPointerDown={onPointerDown} onPointerMove={onPointerUp} onPointerUp={onPointerUp} onPointerOver={onPointerOver} onPointerOut={onPointerOut}/>
         <Slider min={0} max={1} step={0.01}
             value={xAggregate} onChange={onXAggregate} className="sliderHorz"
             style={{ width: width - left - right + 1, top: height - margin.bottom - sliderOffset, left: left + 1, position: "absolute", display: "none" }} />
@@ -104,13 +98,6 @@ const Graph = React.forwardRef(( props, ref ) => {
  * @const {number}
  */
 Graph.scrollSize = 15;
-    
-/**
- * Stores whether this graph displays zooming controls for all dimensions.
- *
- * @type {Map} references keys and boolean values
- */
-Graph.isZooming = new Map();
     
 /**
  * Stores whether this graph displays zooming controls in the X dimension.
@@ -190,97 +177,7 @@ Graph.getDomains = ( xDomain0, yDomain0, xDomain, yDomain, isXOrdinal, isYOrdina
 }
     
 /**
- * Zooms in one or two dimensions.
- *
- * TODO:  Enable and disable zoom buttons.
- *
- * @param   {boolean}  isIn      true iff zooming in, otherwise zooming out
- * @param   {D3Scale}  xScale    X scale (returned)
- * @param   {D3Scale}  yScale    Y scale (returned)
- * @param   {Array}    xDomain0  Initial X domain
- * @param   {Array}    yDomain0  Initial Y domain
- * @param   {boolean}  isX       true iff zooming in X dimension
- * @param   {boolean}  isY       true iff zooming in Y dimension
- */
-Graph.onZoom2D = ( isIn, xScale, yScale, xDomain0, yDomain0, isX, isY ) => {
-
-    // Initialization.
-    const d = 8,
-        f = ( d - 1 ) / ( 2 * d );
-    let xDomain = xScale.domain(),
-        yDomain = yScale.domain(),
-        { xMin0, xMax0, yMin0, yMax0, xMin, xMax, yMin, yMax, xD, yD } = Graph.getDomains( xDomain0, yDomain0, xDomain, yDomain, !!xScale.bandwidth, !!yScale.bandwidth );
-        
-    // Calculate scales for zoom in...
-    if( isIn ) {
-        const xDif = xMax - xMin, yDif = yMax - yMin;
-        xMin = Math.min( xMin0 + ( xMax0 - xMin0 + xD ) * f, xMin + ( xDif + xD ) / d );
-        xMax = Math.max( xMax0 - ( xMax0 - xMin0 + xD ) * f, xMax - ( xDif + xD ) / d );
-        yMin = Math.min( yMin0 + ( yMax0 - yMin0 + yD ) * f, yMin + ( yDif + yD ) / d );
-        yMax = Math.max( yMax0 - ( yMax0 - yMin0 + yD ) * f, yMax - ( yDif + yD ) / d );
-        if( xScale.bandwidth ) {
-            xMin = Math.ceil( xMin );
-            xMax = Math.floor( xMax );
-            if( xMin > xMax ) {
-                xMin = xDomain0.indexOf( xDomain[ 0 ]);
-                xMax = xMin;
-            }
-        }
-        if( yScale.bandwidth ) {
-            yMin = Math.ceil( yMin );
-            yMax = Math.floor( yMax );
-            if( yMin > yMax ) {
-                yMin = yDomain0.indexOf( yDomain[ 0 ]);
-                yMax = yMin;
-            }
-        }
-    }
-    
-    // ...or for zoom out.
-    else {
-        xMin = Math.max( xMin0, xMin - ( xMax - xMin + xD ) / ( d - 2 ));
-        xMax = Math.min( xMax0, xMax + ( xMax - xMin + xD ) / ( d - 2 ));
-        yMin = Math.max( yMin0, yMin - ( yMax - yMin + yD ) / ( d - 2 ));
-        yMax = Math.min( yMax0, yMax + ( yMax - yMin + yD ) / ( d - 2 ));
-        if( xScale.bandwidth ) {
-            xMin = Math.floor( xMin );
-            xMax = Math.ceil( xMax );
-            if( xMax < xMin ) {
-                xMax = xDomain0.indexOf( xDomain[ xDomain.length - 1 ]);
-                xMin = xMax;
-            }
-        }
-        if( yScale.bandwidth ) {
-            yMin = Math.floor( yMin );
-            yMax = Math.ceil( yMax );
-            if( yMax < yMin ) {
-                yMax = yDomain0.indexOf( yDomain[ yDomain.length - 1 ]);
-                yMin = yMax;
-            }
-        }
-    }
-    
-    // Assign the new scales.
-    if( isX ) {
-        if( xScale.bandwidth ) {
-            xScale.domain( xDomain0.slice( xMin, xMax + 1 ));
-        } else {
-            xScale.domain([ xMin, xMax ]);
-        }
-    }
-    if( isY ) {
-        if( yScale.bandwidth ) {
-            yScale.domain( yDomain0.slice( yMin, yMax + 1 ));
-        } else {
-            yScale.domain([ yMin, yMax ]);
-        }
-    }
-};
-    
-/**
  * Initiates zoom in one dimension.
- *
- * TODO:  Implement d3-zoom.
  *
  * This method modifies Graph.downLocation.
  *
@@ -297,10 +194,10 @@ Graph.onZoom2D = ( isIn, xScale, yScale, xDomain0, yDomain0, isX, isY ) => {
  * @param  {Array}    xDomain0      Initial X domain
  * @param  {Array}    yDomain0      Initial Y domain
  */
-Graph.onMouseDown = ( event, width, height, margin, padding, isDragging, xScrollSize, yScrollSize, xScale, yScale, xDomain0, yDomain0 ) => {
-
+Graph.onPointerDown = ( event, width, height, margin, padding, isDragging, xScrollSize, yScrollSize, xScale, yScale, xDomain0, yDomain0 ) => {
+    
     // Initialization.
-    const scrollSize = Graph.scrollSize,
+    const scrollSize = (( event.pointerType === "touch" ) ? 2 : 1 ) * Graph.scrollSize,
         endCapSize = 0.8 * scrollSize;
     let top    = margin.top    + padding.top,
         right  = margin.right  + padding.right,
@@ -311,8 +208,8 @@ Graph.onMouseDown = ( event, width, height, margin, padding, isDragging, xScroll
         xDomain = xScale.domain(),
         yDomain = yScale.domain(),
         { xMin0, xMax0, yMin0, yMax0, xMin, xMax, yMin, yMax, xD, yD } = Graph.getDomains( xDomain0, yDomain0, xDomain, yDomain, !!xScale.bandwidth, !!yScale.bandwidth );
-        
-    // Prevent text selection.
+    
+    // Prevent default event handling.
     event.preventDefault();
         
     // Reset the mousedown coordinates.
@@ -369,7 +266,7 @@ Graph.onMouseDown = ( event, width, height, margin, padding, isDragging, xScroll
  * @param  {Array}    xDomain0  Initial X domain
  * @param  {Array}    yDomain0  Initial Y domain
  */
-Graph.onMouseUp = ( event, width, height, margin, padding, xScale, yScale, xDomain0, yDomain0 ) => {
+Graph.onPointerUp = ( event, width, height, margin, padding, xScale, yScale, xDomain0, yDomain0 ) => {
 
     // Initialization.
     const d = 8;
@@ -382,6 +279,11 @@ Graph.onMouseUp = ( event, width, height, margin, padding, xScale, yScale, xDoma
         xDomain = Graph.downLocation.xDomain,
         yDomain = Graph.downLocation.yDomain,
         { xMin0, xMax0, yMin0, yMax0, xMin, xMax, yMin, yMax, xD, yD } = Graph.getDomains( xDomain0, yDomain0, xDomain, yDomain, !!xScale.bandwidth, !!yScale.bandwidth );
+        
+    // Prevent default event handling.
+    if( event.preventDefault ) {
+        event.preventDefault();
+    }
     
     // Handle event on X scrollbar...
     if( Graph.downLocation.isX ) {
@@ -504,7 +406,7 @@ Graph.onMouseUp = ( event, width, height, margin, padding, xScale, yScale, xDoma
     }
         
     // Reset the mousedown coordinates.
-    if(( Graph.downLocation.isX || Graph.downLocation.isY ) && ( event.type === "mouseup" )) {
+    if(( Graph.downLocation.isX || Graph.downLocation.isY ) && ( event.type === "pointerup" )) {
         Graph.downLocation.isX = false;
         Graph.downLocation.isY = false;
         Graph.downLocation.isMin = false;
@@ -513,7 +415,7 @@ Graph.onMouseUp = ( event, width, height, margin, padding, xScale, yScale, xDoma
 };
 
 /**
- * Returns default aggregate value using Scott's rule.
+ * Returns default aggregate value.
  *
  * @param  {Array[]}     data           data set
  * @param  {number}      columnIndex    index of column to be binned
@@ -535,7 +437,7 @@ Graph.getDefaultAggregate = ( data, columnIndex, xScale ) => {
     let values = [];
     data.forEach( d => values.push( d[ columnIndex ]));
     
-    // Get the initial bin width using Scott's rule.
+    // Get the initial bin width from Scott's rule.
     let bins = d3.bin().thresholds( d3.thresholdScott )( values );
     let binWidth = ( domain[ 1 ] - domain[ 0 ]) / bins.length;
     
@@ -745,7 +647,6 @@ Graph.drawAxes = ( ref, width, height, margin, padding, xScrollSize, yScrollSize
  * @param  {Box}      padding       padding
  * @param  {number}   xScrollSize   scroll size in the X dimension, or <0 if not supported, or 0 for default
  * @param  {number}   yScrollSize   scroll size in the Y dimension, or <0 if not supported, or 0 for default
- * @param  {boolean}  isZooming     true iff this graph can be zoomed in all dimensions
  * @param  {boolean}  isXZooming    true iff this graph can be zoomed in the X dimension
  * @param  {boolean}  isYZooming    true iff this graph can be zoomed in the Y dimension
  * @param  {boolean}  isXBinning    true iff this graph can be binned in the X dimension
@@ -757,15 +658,15 @@ Graph.drawAxes = ( ref, width, height, margin, padding, xScrollSize, yScrollSize
  * @param  {string}   xLabel        X axis label
  * @param  {string}   yLabel        Y axis label
  */
-Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, yScrollSize, isZooming, isXZooming, isYZooming, isXBinning, isYBinning, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel ) => {
+Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, yScrollSize, isXZooming, isYZooming, isXBinning, isYBinning, xScale, yScale, xDomain0, yDomain0, xLabel, yLabel ) => {
     
     // Initialization.
     const svg = d3.select( ref.current.childNodes[ 0 ]),
         scrollSize = Graph.scrollSize,
         halfSize = scrollSize / 2,
         colorLight = "#ebeeef",
-        colorLine = "#cbd2d7";
-    let xDomain = xScale.domain(),
+        colorLine = "#cbd2d7",
+        xDomain = xScale.domain(),
         yDomain = yScale.domain(),
         { xMin0, xMax0, yMin0, yMax0, xMin, xMax, yMin, yMax, xD, yD } = Graph.getDomains( xDomain0, yDomain0, xDomain, yDomain, !!xScale.bandwidth, !!yScale.bandwidth ),
         x = margin.left + padding.left,
@@ -776,7 +677,7 @@ Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, yScroll
     // Draw the X scroll bar.
     let x1 = x + w * ( xMin - xMin0      ) / ( xMax0 - xMin0 + xD ),
         x2 = x + w * ( xMax - xMin0 + xD ) / ( xMax0 - xMin0 + xD );
-    if( xScrollSize ) {
+    if(( xScrollSize >= 0 ) && ( x2 > x1 )) {
         svg.append( "rect" )
             .attr( "x", x1 )
             .attr( "y", height - xScrollSize )
@@ -897,11 +798,11 @@ Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, yScroll
     // Draw the Y scroll bar.
     let y1 = y + h * ( 1 - ( yMin - yMin0      ) / ( yMax0 - yMin0 + yD )),
         y2 = y + h * ( 1 - ( yMax - yMin0 + yD ) / ( yMax0 - yMin0 + yD ));
-    if( yScrollSize ) {
+    if(( yScrollSize >= 0 ) && ( y2 > y1 )) {
         svg.append( "rect" )
             .attr( "x", 0 )
             .attr( "y", y1 )
-            .attr( "width", width - xScrollSize )
+            .attr( "width", width - yScrollSize )
             .attr( "height", y2 - y1 )
             .attr( "opacity","0.5" )
             .style( "fill", colorLine );
@@ -987,22 +888,15 @@ Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, yScroll
             .style( "fill", colorLight );
     }
 
-    // Show or hide the buttons.
-    if( isZooming !== !!Graph.isZooming.get( ref )) {
-        ref.current.childNodes[ 1 ].style.display = (( isZooming ) ? "inline" : "none" );
-        ref.current.childNodes[ 2 ].style.display = (( isZooming ) ? "inline" : "none" );
-    }
-
     // Show or hide the sliders.
     if( isXBinning !== !!Graph.isXBinning.get( ref )) {
-        ref.current.childNodes[ 3 ].style.display = ( isXBinning ? "inline" : "none" );
+        ref.current.childNodes[ 1 ].style.display = ( isXBinning ? "inline" : "none" );
     }
     if( isYBinning !== !!Graph.isYBinning.get( ref )) {
-        ref.current.childNodes[ 4 ].style.display = ( isYBinning ? "inline" : "none" );
+        ref.current.childNodes[ 2 ].style.display = ( isYBinning ? "inline" : "none" );
     }
     
     // Record the new ztates.
-    Graph.isZooming.set( ref, isZooming );
     Graph.isXZooming.set( ref, isXZooming );
     Graph.isYZooming.set( ref, isYZooming );
     Graph.isXBinning.set( ref, isXBinning );

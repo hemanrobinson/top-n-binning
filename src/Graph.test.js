@@ -11,6 +11,7 @@ let container = null;
 
 // Sets up a DOM element as a render target.
 beforeEach(() => {
+    window.PointerEvent = MouseEvent;   // PointerEvent is not supported in JSDOM
     container = document.createElement( "div" );
     document.body.appendChild( container );
 });
@@ -31,12 +32,10 @@ it( "creates a Graph element", () => {
     
     // Test structure.
     const div = container.querySelector( "div" );
-    expect( div.childNodes.length ).toBe( 5 );
+    expect( div.childNodes.length ).toBe( 3 );
     expect( div.childNodes[ 0 ].nodeName ).toBe( "svg" );
-    expect( div.childNodes[ 1 ].nodeName ).toBe( "BUTTON" );
-    expect( div.childNodes[ 2 ].nodeName ).toBe( "BUTTON" );
-    expect( div.childNodes[ 3 ].nodeName ).toBe( "SPAN" );
-    expect( div.childNodes[ 4 ].nodeName ).toBe( "SPAN" );
+    expect( div.childNodes[ 1 ].nodeName ).toBe( "SPAN" );
+    expect( div.childNodes[ 2 ].nodeName ).toBe( "SPAN" );
 });
 
 it( "returns width of scroll bar", () => {
@@ -46,12 +45,9 @@ it( "returns width of scroll bar", () => {
 it( "returns whether controls are displayed", () => {
     let ref = { current: { childNodes: [
             document.createElement( "svg" ),
-            document.createElement( "BUTTON" ),
-            document.createElement( "BUTTON" ),
             document.createElement( "SPAN" ),
             document.createElement( "SPAN" )
         ]}};
-    expect( Graph.isZooming.get( ref )).toBe( undefined );
     expect( Graph.isXZooming.get( ref )).toBe( undefined );
     expect( Graph.isYZooming.get( ref )).toBe( undefined );
     expect( Graph.isXBinning.get( ref )).toBe( undefined );
@@ -73,32 +69,6 @@ it( "returns initial and current domains", () => {
         "xD": 1, "xMax": 2, "xMax0": 2, "xMin": 0, "xMin0": 0, "yD": 1, "yMax": 2, "yMax0": 2, "yMin": 0, "yMin0": 0 });
 });
 
-it( "zooms in two dimensions", () => {
-
-    // Continuous scales.
-    let xScale = d3.scaleLinear().domain([ 0, 1 ]).range([ 0, 100 ]),
-        yScale = d3.scaleLinear().domain([ 0, 1 ]).range([ 0, 100 ]);
-    Graph.onZoom2D( true, xScale, yScale, [ 0, 1 ], [ 0, 1 ], true, true );
-    expect( xScale.domain()).toEqual([ 0.125, 0.875 ]);
-    expect( yScale.domain()).toEqual([ 0.125, 0.875 ]);
-    Graph.onZoom2D( false, xScale, yScale, [ 0, 1 ], [ 0, 1 ], true, true );
-    expect( xScale.domain()).toEqual([ 0, 1 ]);
-    expect( yScale.domain()).toEqual([ 0, 1 ]);
-    
-    // Ordinal scales.
-    xScale = d3.scaleBand().domain( "A", "B", "C" ).range([ 0, 100 ]);
-    yScale = d3.scaleBand().domain( "A", "B", "C" ).range([ 0, 100 ]);
-    Graph.onZoom2D( true, xScale, yScale, [ "A", "B", "C" ], [ "A", "B", "C" ], true, true );
-    expect( xScale.domain()).toEqual([ "A" ]);
-    expect( yScale.domain()).toEqual([ "A" ]);
-    Graph.onZoom2D( false, xScale, yScale, [ "A", "B", "C" ], [ "A", "B", "C" ], true, true );
-    expect( xScale.domain()).toEqual([ "A", "B" ]);
-    expect( yScale.domain()).toEqual([ "A", "B" ]);
-    Graph.onZoom2D( false, xScale, yScale, [ "A", "B", "C" ], [ "A", "B", "C" ], true, true );
-    expect( xScale.domain()).toEqual([ "A", "B", "C" ]);
-    expect( yScale.domain()).toEqual([ "A", "B", "C" ]);
-});
-
 it( "zooms in one dimension: mousedown, mousemove, and mouseup events", () => {
 
     // Continuous scales.
@@ -106,25 +76,25 @@ it( "zooms in one dimension: mousedown, mousemove, and mouseup events", () => {
         padding = { top: 0, right: 0, bottom: 0, left: 0 },
         xScale = d3.scaleLinear().domain([ 0, 1 ]).range([ 0, 100 ]),
         yScale = d3.scaleLinear().domain([ 0, 1 ]).range([ 0, 100 ]);
-    Graph.onMouseDown({ type: "mousedown", nativeEvent: { offsetX: 100, offsetY: 390 }, preventDefault: () => {}}, 400, 400, margin, padding, false, 0, 0, xScale, yScale, [ 0, 1 ], [ 0, 1 ]);
+    Graph.onPointerDown({ type: "pointerdown", nativeEvent: { offsetX: 100, offsetY: 390 }, preventDefault: () => {}}, 400, 400, margin, padding, false, 0, 0, xScale, yScale, [ 0, 1 ], [ 0, 1 ]);
     expect( Graph.downLocation ).toEqual({ x: 100, y: 390, xDomain: [ 0, 1 ], yDomain: [], isX: true, isY: false, isMin: false, isMax: false });
-    Graph.onMouseUp({ type: "mouseup", nativeEvent: { offsetX: 100, offsetY: 390 }}, 400, 400, margin, padding, xScale, yScale, [ 0, 1 ], [ 0, 1 ]);
+    Graph.onPointerUp({ type: "pointerup", nativeEvent: { offsetX: 100, offsetY: 390 }}, 400, 400, margin, padding, xScale, yScale, [ 0, 1 ], [ 0, 1 ]);
     expect( Graph.downLocation ).toEqual({ x: 100, y: 390, xDomain: [ 0, 1 ], yDomain: [], isX: false, isY: false, isMin: false, isMax: false });
-    Graph.onMouseDown({ type: "mousedown", nativeEvent: { offsetX: 10, offsetY: 100 }, preventDefault: () => {}}, 400, 400, margin, padding, false, 0, 0, xScale, yScale, [ 0, 1 ], [ 0, 1 ]);
+    Graph.onPointerDown({ type: "pointerdown", nativeEvent: { offsetX: 10, offsetY: 100 }, preventDefault: () => {}}, 400, 400, margin, padding, false, 0, 0, xScale, yScale, [ 0, 1 ], [ 0, 1 ]);
     expect( Graph.downLocation ).toEqual({ x: 10, y: 100, xDomain: [], yDomain: [ 0, 1 ], isX: false, isY: true, isMin: false, isMax: false });
-    Graph.onMouseUp({ type: "mouseup", nativeEvent: { offsetX: 100, offsetY: 390 }}, 400, 400, margin, padding, xScale, yScale, [ 0, 1 ], [ 0, 1 ]);
+    Graph.onPointerUp({ type: "pointerup", nativeEvent: { offsetX: 100, offsetY: 390 }}, 400, 400, margin, padding, xScale, yScale, [ 0, 1 ], [ 0, 1 ]);
     expect( Graph.downLocation ).toEqual({ x: 10, y: 100, xDomain: [], yDomain: [ 0, 1 ], isX: false, isY: false, isMin: false, isMax: false });
     
     // Categorical scales.
     xScale = d3.scaleBand().domain( "A", "B", "C" ).range([ 0, 100 ]);
     yScale = d3.scaleBand().domain( "A", "B", "C" ).range([ 0, 100 ]);
-    Graph.onMouseDown({ type: "mousedown", nativeEvent: { offsetX: 100, offsetY: 390 }, preventDefault: () => {}}, 400, 400, margin, padding, false, 0, 0, xScale, yScale, [ 0, 1 ], [ 0, 1 ]);
+    Graph.onPointerDown({ type: "pointerdown", nativeEvent: { offsetX: 100, offsetY: 390 }, preventDefault: () => {}}, 400, 400, margin, padding, false, 0, 0, xScale, yScale, [ 0, 1 ], [ 0, 1 ]);
     expect( Graph.downLocation ).toEqual({ x: 100, y: 390, xDomain: [ "A" ], yDomain: [], isX: true, isY: false, isMin: false, isMax: false });
-    Graph.onMouseUp({ type: "mouseup", nativeEvent: { offsetX: 100, offsetY: 390 }}, 400, 400, margin, padding, xScale, yScale, [ 0, 1 ], [ 0, 1 ]);
+    Graph.onPointerUp({ type: "pointerup", nativeEvent: { offsetX: 100, offsetY: 390 }}, 400, 400, margin, padding, xScale, yScale, [ 0, 1 ], [ 0, 1 ]);
     expect( Graph.downLocation ).toEqual({ x: 100, y: 390, xDomain: [ "A" ], yDomain: [], isX: false, isY: false, isMin: false, isMax: false });
-    Graph.onMouseDown({ type: "mousedown", nativeEvent: { offsetX: 10, offsetY: 100 }, preventDefault: () => {}}, 400, 400, margin, padding, false, 0, 0, xScale, yScale, [ 0, 1 ], [ 0, 1 ]);
+    Graph.onPointerDown({ type: "pointerdown", nativeEvent: { offsetX: 10, offsetY: 100 }, preventDefault: () => {}}, 400, 400, margin, padding, false, 0, 0, xScale, yScale, [ 0, 1 ], [ 0, 1 ]);
     expect( Graph.downLocation ).toEqual({ x: 10, y: 100, xDomain: [], yDomain: [ "A" ], isX: false, isY: true, isMin: false, isMax: false });
-    Graph.onMouseUp({ type: "mouseup", nativeEvent: { offsetX: 100, offsetY: 390 }}, 400, 400, margin, padding, xScale, yScale, [ 0, 1 ], [ 0, 1 ]);
+    Graph.onPointerUp({ type: "pointerup", nativeEvent: { offsetX: 100, offsetY: 390 }}, 400, 400, margin, padding, xScale, yScale, [ 0, 1 ], [ 0, 1 ]);
     expect( Graph.downLocation ).toEqual({ x: 10, y: 100, xDomain: [], yDomain: [ "A" ], isX: false, isY: false, isMin: false, isMax: false });
     
     // TODO:  Test more cases here.
@@ -196,6 +166,6 @@ it( "draws the controls", () => {
         padding = { top: 0, right: 0, bottom: 0, left: 0 },
         xScale = d3.scaleLinear().domain([ 0, 1 ]).range([ 0, 100 ]),
         yScale = d3.scaleLinear().domain([ 0, 1 ]).range([ 0, 100 ]);
-    Graph.drawControls( ref, 400, 400, margin, padding, 0, 0, true, true, true, true, true, xScale, yScale, [ 0, 1 ], [ 0, 1 ], "X", "Y" );
-    Graph.drawControls( ref, 400, 400, margin, padding, 0, 0, false, false, false, false, false, xScale, yScale, [ 0, 1 ], [ 0, 1 ], "X", "Y" );
+    Graph.drawControls( ref, 400, 400, margin, padding, 0, 0, true, true, true, true, xScale, yScale, [ 0, 1 ], [ 0, 1 ], "X", "Y" );
+    Graph.drawControls( ref, 400, 400, margin, padding, 0, 0, false, false, false, false, xScale, yScale, [ 0, 1 ], [ 0, 1 ], "X", "Y" );
 });

@@ -38,13 +38,13 @@ it( "creates a Heatmap element", () => {
     expect( svg.nodeName ).toBe( "svg" );
     
     // Test mouse events.
-    svg.dispatchEvent( new MouseEvent( "mousedown", { bubbles: true }));
+    svg.dispatchEvent( new MouseEvent( "pointerdown", { bubbles: true }));
     Graph.downLocation.isX = true;
-    svg.dispatchEvent( new MouseEvent( "mouseup", { bubbles: true }));
+    svg.dispatchEvent( new MouseEvent( "pointerup", { bubbles: true }));
     Graph.downLocation.isX = false;
-    svg.dispatchEvent( new MouseEvent( "mouseup", { bubbles: true }));
-    svg.dispatchEvent( new MouseEvent( "mouseover", { bubbles: true }));
-    svg.dispatchEvent( new MouseEvent( "mouseout", { bubbles: true }));
+    svg.dispatchEvent( new MouseEvent( "pointerup", { bubbles: true }));
+    svg.dispatchEvent( new MouseEvent( "pointerover", { bubbles: true }));
+    svg.dispatchEvent( new MouseEvent( "pointerout", { bubbles: true }));
     
     // TODO:  Test xAggregate and yAggregate state changes.
 });
