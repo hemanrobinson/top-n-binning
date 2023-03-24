@@ -208,9 +208,6 @@ Graph.onPointerDown = ( event, width, height, margin, padding, isDragging, xScro
         xDomain = xScale.domain(),
         yDomain = yScale.domain(),
         { xMin0, xMax0, yMin0, yMax0, xMin, xMax, yMin, yMax, xD, yD } = Graph.getDomains( xDomain0, yDomain0, xDomain, yDomain, !!xScale.bandwidth, !!yScale.bandwidth );
-    
-    // Prevent default event handling.
-    event.preventDefault();
         
     // Reset the mousedown coordinates.
     Graph.downLocation.x = xDown;
@@ -227,6 +224,9 @@ Graph.onPointerDown = ( event, width, height, margin, padding, isDragging, xScro
         let w = width - right - left + 1,
             x0 = left + w * ( xMin - xMin0      ) / ( xMax0 - xMin0 + xD ),
             x1 = left + w * ( xMax - xMin0 + xD ) / ( xMax0 - xMin0 + xD );
+        if( event.preventDefault ) {
+            event.preventDefault();
+        }
         Graph.downLocation.xDomain = xScale.domain();
         Graph.downLocation.isX = true;
         if(( x0 <= xDown ) && ( xDown <= x0 + endCapSize )) {
@@ -236,11 +236,14 @@ Graph.onPointerDown = ( event, width, height, margin, padding, isDragging, xScro
         }
     }
     
-    // ...or handle event on Y scrollbar.
+    // ...or handle event on Y scrollbar...
     else if(( 0 <= xDown ) && ( xDown <= scrollSize ) && ( top <= yDown ) && ( yDown <= height - bottom )) {
         let h = height - bottom - top + 1,
             y0 = top + h * ( 1 - ( yMin - yMin0      ) / ( yMax0 - yMin0 + yD )),
             y1 = top + h * ( 1 - ( yMax - yMin0 + yD ) / ( yMax0 - yMin0 + yD ));
+        if( event.preventDefault ) {
+            event.preventDefault();
+        }
         Graph.downLocation.yDomain = yScale.domain();
         Graph.downLocation.isY = true;
         if(( y1 <= yDown ) && ( yDown <= y1 + endCapSize )) {
@@ -279,14 +282,14 @@ Graph.onPointerUp = ( event, width, height, margin, padding, xScale, yScale, xDo
         xDomain = Graph.downLocation.xDomain,
         yDomain = Graph.downLocation.yDomain,
         { xMin0, xMax0, yMin0, yMax0, xMin, xMax, yMin, yMax, xD, yD } = Graph.getDomains( xDomain0, yDomain0, xDomain, yDomain, !!xScale.bandwidth, !!yScale.bandwidth );
-        
-    // Prevent default event handling.
-    if( event.preventDefault ) {
-        event.preventDefault();
-    }
     
     // Handle event on X scrollbar...
     if( Graph.downLocation.isX ) {
+        
+        // Prevent default event handling.
+        if( event.preventDefault ) {
+            event.preventDefault();
+        }
     
         // Calculate the difference.
         const f = ( xMax0 - xMin0 + xD ) / d;
@@ -347,6 +350,11 @@ Graph.onPointerUp = ( event, width, height, margin, padding, xScale, yScale, xDo
     
     // ...or handle event on Y scrollbar.
     else if( Graph.downLocation.isY ) {
+        
+        // Prevent default event handling.
+        if( event.preventDefault ) {
+            event.preventDefault();
+        }
     
         // Calculate the difference.
         const f = ( yMax0 - yMin0 + yD ) / d;
@@ -509,6 +517,27 @@ Graph.getThresholds = ( data, columnIndex, xScale, aggregate ) => {
 };
     
 /**
+ * Adjusts scale domain to be within original domain.
+ *
+ * @param {D3Scale}   scale   scale
+ * @param {number[]}  domain0 original domain
+ */
+Graph.clampDomain = ( scale, domain0 ) => {
+    const domain = scale.domain().concat();
+    if( domain[ 1 ] > domain[ 0 ] + domain0[ 1 ]  - domain0[ 0 ]) {
+        domain[ 1 ] = domain[ 0 ] + domain0[ 1 ]  - domain0[ 0 ];
+    }
+    if( domain[ 0 ] < domain0[ 0 ]) {
+        domain[ 1 ] += domain0[ 0 ] - domain[ 0 ];
+        domain[ 0 ] = domain0[ 0 ];
+    } else if( domain[ 1 ] > domain0[ 1 ]) {
+        domain[ 0 ] += domain0[ 1 ] - domain[ 1 ];
+        domain[ 1 ] = domain0[ 1 ];
+    }
+    scale.domain( domain );
+}
+    
+/**
  * Draws the axes.
  *
  * @param  {Object}   ref           reference to DIV
@@ -666,6 +695,7 @@ Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, yScroll
         halfSize = scrollSize / 2,
         colorLight = "#ebeeef",
         colorLine = "#cbd2d7",
+        opacity = 0.7,
         xDomain = xScale.domain(),
         yDomain = yScale.domain(),
         { xMin0, xMax0, yMin0, yMax0, xMin, xMax, yMin, yMax, xD, yD } = Graph.getDomains( xDomain0, yDomain0, xDomain, yDomain, !!xScale.bandwidth, !!yScale.bandwidth ),
@@ -674,7 +704,7 @@ Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, yScroll
         y = margin.top + padding.top,
         h = height - margin.bottom - padding.bottom - y + 1;
         
-    // Draw the X scroll bar.
+    // Draw an overview scrollbar if requested.
     let x1 = x + w * ( xMin - xMin0      ) / ( xMax0 - xMin0 + xD ),
         x2 = x + w * ( xMax - xMin0 + xD ) / ( xMax0 - xMin0 + xD );
     if(( xScrollSize >= 0 ) && ( x2 > x1 )) {
@@ -683,9 +713,10 @@ Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, yScroll
             .attr( "y", height - xScrollSize )
             .attr( "width", x2 - x1 )
             .attr( "height", xScrollSize )
-            .attr( "opacity","0.5" )
+            .attr( "rx", halfSize )
+            .attr( "opacity", opacity )
             .style( "fill", colorLine );
-     }
+    }
     
     // Draw the X zoombar...
     const d = halfSize / 2,
@@ -705,6 +736,7 @@ Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, yScroll
                 .attr( "y1", height - halfSize )
                 .attr( "x2", x2 - halfSize )
                 .attr( "y2", height - halfSize )
+                .attr( "opacity", opacity )
                 .style( "stroke-width", scrollSize )
                 .style( "stroke", colorLine )
                 .style( "stroke-linecap", "round" );
@@ -721,19 +753,20 @@ Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, yScroll
                 .attr( "y1", height - halfSize )
                 .attr( "x2", x2 - halfSize - 2 )
                 .attr( "y2", height - halfSize )
+                .attr( "opacity", opacity )
                 .style( "stroke-width", scrollSize )
                 .style( "stroke", colorLine )
                 .style( "stroke-linecap", "butt" );
         }
         
-        // ...or an overview scrollbar.
+        // ...or handles for the overview scrollbar.
         else {
             svg.append( "line" )
                 .attr( "x1", x1 + halfSize + 1 )
                 .attr( "y1", height - xScrollSize )
                 .attr( "x2", x1 + halfSize + 1 )
                 .attr( "y2", height )
-                .attr( "opacity","0.5" )
+                .attr( "opacity", opacity )
                 .style( "stroke-width", 1 )
                 .style( "stroke", "#ffffff" )
                 .style( "stroke-linecap", "butt" );
@@ -742,7 +775,7 @@ Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, yScroll
                 .attr( "y1", height - xScrollSize )
                 .attr( "x2", x2 - halfSize - 1 )
                 .attr( "y2", height )
-                .attr( "opacity","0.5" )
+                .attr( "opacity", opacity )
                 .style( "stroke-width", 1 )
                 .style( "stroke", "#ffffff" )
                 .style( "stroke-linecap", "butt" );
@@ -804,7 +837,7 @@ Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, yScroll
             .attr( "y", y1 )
             .attr( "width", width - yScrollSize )
             .attr( "height", y2 - y1 )
-            .attr( "opacity","0.5" )
+            .attr( "opacity", opacity )
             .style( "fill", colorLine );
      }
     
@@ -823,6 +856,7 @@ Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, yScroll
             .attr( "y1", y2 + halfSize )
             .attr( "x2", halfSize )
             .attr( "y2", y1 - halfSize )
+            .attr( "opacity", opacity )
             .style( "stroke-width", scrollSize )
             .style( "stroke", colorLine )
             .style( "stroke-linecap", "round" );
@@ -839,6 +873,7 @@ Graph.drawControls = ( ref, width, height, margin, padding, xScrollSize, yScroll
             .attr( "y1", y2 + halfSize + 2 )
             .attr( "x2", halfSize )
             .attr( "y2", y1 - halfSize - 2 )
+            .attr( "opacity", opacity )
             .style( "stroke-width", scrollSize )
             .style( "stroke", colorLine )
             .style( "stroke-linecap", "butt" );
