@@ -81,7 +81,7 @@ const Graph = React.forwardRef(( props, ref ) => {
     // Offset position of MUI slider.  Differs on iPad.
     let sliderOffset = 12;
     if(( 'ontouchstart' in window ) || ( navigator.maxTouchPoints > 0 )) {
-        sliderOffset = 16;
+        sliderOffset = 20;
     }
     
     // Return the component.
