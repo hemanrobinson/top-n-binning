@@ -203,11 +203,19 @@ Graph.onPointerDown = ( event, width, height, margin, padding, isDragging, xScro
         right  = margin.right  + padding.right,
         bottom = margin.bottom + padding.bottom,
         left   = margin.left   + padding.left,
-        xDown = event.nativeEvent.offsetX,
-        yDown = event.nativeEvent.offsetY,
         xDomain = xScale.domain(),
         yDomain = yScale.domain(),
         { xMin0, xMax0, yMin0, yMax0, xMin, xMax, yMin, yMax, xD, yD } = Graph.getDomains( xDomain0, yDomain0, xDomain, yDomain, !!xScale.bandwidth, !!yScale.bandwidth );
+    let sourceEvent = event.nativeEvent;
+    let xDown, yDown;
+    if( sourceEvent.touches ) {
+        const touch = sourceEvent.touches[ 0 ];
+        xDown = touch.clientX - sourceEvent.currentTarget.getBoundingClientRect().x;
+        yDown = touch.clientY - sourceEvent.currentTarget.getBoundingClientRect().y;
+    } else {
+        xDown = sourceEvent.offsetX;
+        yDown = sourceEvent.offsetY;
+    }
         
     // Reset the mousedown coordinates.
     Graph.downLocation.x = xDown;
@@ -218,6 +226,9 @@ Graph.onPointerDown = ( event, width, height, margin, padding, isDragging, xScro
     Graph.downLocation.isY = false;
     Graph.downLocation.isMin = false;
     Graph.downLocation.isMax = false;
+  
+    // Stop propagation to document.
+    event.stopPropagation();
     
     // Handle event on X scrollbar...
     if(( left <= xDown ) && ( xDown <= width - right ) && ( height - ( xScrollSize ? xScrollSize : scrollSize ) <= yDown ) && ( yDown <= height )) {
@@ -277,11 +288,19 @@ Graph.onPointerUp = ( event, width, height, margin, padding, xScale, yScale, xDo
         right  = margin.right  + padding.right,
         bottom = margin.bottom + padding.bottom,
         left   = margin.left   + padding.left,
-        xUp = event.nativeEvent.offsetX,
-        yUp = event.nativeEvent.offsetY,
         xDomain = Graph.downLocation.xDomain,
         yDomain = Graph.downLocation.yDomain,
         { xMin0, xMax0, yMin0, yMax0, xMin, xMax, yMin, yMax, xD, yD } = Graph.getDomains( xDomain0, yDomain0, xDomain, yDomain, !!xScale.bandwidth, !!yScale.bandwidth );
+    let sourceEvent = event.nativeEvent;
+    let xUp, yUp;
+    if( sourceEvent.touches ) {
+        const touch = sourceEvent.touches[ 0 ];
+        xUp = touch.clientX - sourceEvent.currentTarget.getBoundingClientRect().x;
+        yUp = touch.clientY - sourceEvent.currentTarget.getBoundingClientRect().y;
+    } else {
+        xUp = sourceEvent.offsetX;
+        yUp = sourceEvent.offsetY;
+    }
     
     // Handle event on X scrollbar...
     if( Graph.downLocation.isX ) {
@@ -414,7 +433,7 @@ Graph.onPointerUp = ( event, width, height, margin, padding, xScale, yScale, xDo
     }
         
     // Reset the mousedown coordinates.
-    if(( Graph.downLocation.isX || Graph.downLocation.isY ) && ( event.type === "pointerup" )) {
+    if(( Graph.downLocation.isX || Graph.downLocation.isY ) && ( event.type === "pointerup" ) && ( event.pointerType !== "touch" )) {
         Graph.downLocation.isX = false;
         Graph.downLocation.isY = false;
         Graph.downLocation.isMin = false;
