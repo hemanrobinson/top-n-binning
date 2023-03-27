@@ -64,7 +64,6 @@ import './Graph.css';
 const Graph = React.forwardRef(( props, ref ) => {
     
     // Initialization.
-    const sliderOffset = 12;
     let { width, height, margin, padding, onPointerDown, onPointerUp, onPointerOver, onPointerOut, xAggregate, yAggregate, onXAggregate, onYAggregate } = props,
         top    = margin.top    + padding.top,
         right  = margin.right  + padding.right,
@@ -77,6 +76,12 @@ const Graph = React.forwardRef(( props, ref ) => {
     }
     if( Number.isNaN( yAggregate )) {
         yAggregate = 0;
+    }
+        
+    // Offset position of MUI slider.  Differs on iPad.
+    let sliderOffset = 12;
+    if(( 'ontouchstart' in window ) || ( navigator.maxTouchPoints > 0 )) {
+        sliderOffset = 16;
     }
     
     // Return the component.
