@@ -75,7 +75,7 @@ const App = () => {
                   For continuous data, the default bin width is determined by Scott's binning rule (Scott, 1979).  The minimum bin width is the smallest visible width.  The maximum bin width puts all the data in one bin.  These are natural limits that users expect.
                 </p>
                 <p>
-                  For categorical data, an "Other" category with slider control can been implemented with a "Top N" filter in Tableau (Sleeper, 2020) and Power BI (Sugar, 2021).  In both products, this is not the default behavior and takes several steps to set up.
+                  For categorical data, an "Other" category with slider can be implemented using a "Top N" filter in Tableau (Sleeper, 2020) and Power BI (Sugar, 2021).  In both products, this does not happen by default, but requires multiple steps.
                 </p>
                 <h2>Further Reading</h2>
                 <ul>
