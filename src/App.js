@@ -72,17 +72,19 @@ const App = () => {
                 The slider is positioned along the axis to afford direct manipulation in that dimension and to conserve screen real estate.
                 </p>
                 <p>
-                The default bin width is determined by Scott's binning rule (Scott, 1979).
+                  For continuous data, the default bin width is determined by Scott's binning rule (Scott, 1979).  The minimum bin width is the smallest visible width.  The maximum bin width puts all the data in one bin.  These are natural limits that users expect.
                 </p>
                 <p>
-                The minimum bin width is the smallest visible width.  The maximum bin width puts all the data in one bin.  These are natural limits that users expect.
+                  For categorical data, an "Other" category with slider control can been implemented with a "Top N" filter in Tableau (Sleeper, 2020) and Power BI (Sugar, 2021).  In both products, this is not the default behavior and takes several steps to set up.
                 </p>
                 <h2>Further Reading</h2>
                 <ul>
                     <li>Freedman, D. and Diaconis, P. (1981). "On the histogram as a density estimator: L2 theory". Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete. 57 (4): 453–476. <a href="https://bayes.wustl.edu/Manual/FreedmanDiaconis1_1981.pdf">https://bayes.wustl.edu/Manual/FreedmanDiaconis1_1981.pdf</a>.</li><br/>
                     <li>Scott, D. W. (1979). "On optimal and data-based histograms". Biometrika. 66 (3): 605–610. <a href="https://doi.org/10.2307/2335182">https://doi.org/10.2307/2335182</a>.</li><br/>
                     <li>Shneiderman, B. (1996). "The Eyes Have It: A Task by Data Type Taxonomy for Information Visualizations". In Proceedings of the IEEE Symposium on Visual Languages, Sept. 1996, 336-343. <a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1996eyes.pdf">https://www.cs.umd.edu/~ben/papers/Shneiderman1996eyes.pdf</a>.</li><br/>
+                    <li>Sleeper, R. (2023). Innovative Tableau: 100 More Tips, Tutorials, and Strategies. Sebastopol CA: O'Reilly Media. <a href="https://playfairdata.com/tableau-tip-how-to-dynamically-display-the-top-n-vs-other/">https://playfairdata.com/tableau-tip-how-to-dynamically-display-the-top-n-vs-other/</a>.</li><br/>
                     <li>Sturges, H. A. (1926). "The choice of a class interval". Journal of the American Statistical Association. 21 (153): 65–66. <a href="https://www.jstor.org/stable/2965501">https://www.jstor.org/stable/2965501</a>.</li><br/>
+                    <li>Sugar, S. (2021). "Power BI Top N and Other". <a href="https://www.proserveit.com/blog/ms-power-bi-topn-and-other">https://www.proserveit.com/blog/ms-power-bi-topn-and-other</a>.</li><br/>
                 </ul>
             </div>
             <a href="https://github.com/hemanrobinson/bin/">Code Shared on GitHub</a>
