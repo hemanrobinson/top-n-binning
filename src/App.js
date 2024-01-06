@@ -3,6 +3,7 @@ import Histogram from './Histogram';
 import BarChart from './BarChart';
 import Heatmap from './Heatmap';
 import './App.css';
+import github from './github.svg';
 import shneiderman from './shneiderman.png';
 
 // Application:  Dynamic Binning
@@ -12,7 +13,7 @@ const App = () => {
     return (
         <div className="Column">
             <div className="Description">
-                <h1>Dynamic Binning</h1>
+                <h1>Dynamic Binning&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/hemanrobinson/bin/"><img className="icon" title="Code Shared on GitHub" alt="Code Shared on GitHub" src={github}/></a></h1>
                 <p>
                 <a href="https://www.cs.umd.edu/users/ben/">Ben Shneiderman</a> taught us all to <a href="https://www.perceptualedge.com/articles/b-eye/path_to_visual_discovery.pdf">"Overview first, zoom and filter, then details-on-demand"</a> (Shneiderman, 1996).
                 </p>
@@ -87,7 +88,6 @@ const App = () => {
                     <li>Sugar, S. (2021). "Power BI Top N and Other". <a href="https://www.proserveit.com/blog/ms-power-bi-topn-and-other">https://www.proserveit.com/blog/ms-power-bi-topn-and-other</a>.</li><br/>
                 </ul>
             </div>
-            <a href="https://github.com/hemanrobinson/bin/">Code Shared on GitHub</a>
         </div>
     );
 }
