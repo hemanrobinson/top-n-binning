@@ -65,7 +65,7 @@ const App = () => {
                 <Heatmap dataSet={ "Trends" } />
             </div>
             <div className="Description">
-                <h2>Design Notes</h2>
+                <h2>Usability</h2>
                 <p>
                 To minimize distraction from the data display, controls are displayed only when they can be used.  On desktops, controls are discoverable by hovering over the graph.  (On mobile devices, not supported here, a tap might serve this purpose.)
                 </p>
