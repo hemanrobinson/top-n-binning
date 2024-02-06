@@ -78,6 +78,10 @@ const App = () => {
                 <p>
                   For categorical data, an "Other" category with slider can be implemented using a "Top N" filter in Tableau (Sleeper, 2020) and Power BI (Sugar, 2021).  In both products, this does not happen by default, but requires multiple steps.
                 </p>
+                <h2>Implementation</h2>
+                <p>
+                This project uses <a href="https://react.dev">React</a>, <a href="https://github.com/mui-org/material-ui">Material-UI</a>, and <a href="https://github.com/d3/d3">d3</a>.
+                </p>
                 <h2>Further Reading</h2>
                 <ul>
                     <li>Freedman, D. and Diaconis, P. (1981). "On the histogram as a density estimator: L2 theory". Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete. 57 (4): 453–476. <a href="https://bayes.wustl.edu/Manual/FreedmanDiaconis1_1981.pdf">https://bayes.wustl.edu/Manual/FreedmanDiaconis1_1981.pdf</a>.</li><br/>

@@ -8,4 +8,4 @@ Does "zooming" include binning?  In graphs of aggregated data, zooming the scale
 
 [![Bin](src/bin.png "Bin")](https://hemanrobinson.github.io/bin/)
 
-This project uses [d3](https://github.com/d3/d3) and [Material-UI](https://github.com/mui-org/material-ui), and was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project uses [React](https://react.dev), [Material-UI](https://github.com/mui-org/material-ui), and [d3](https://github.com/d3/d3).
