@@ -1,6 +1,6 @@
 {
-    "short_name": "Bin",
-    "name": "Bin",
+    "short_name": "Top N and Binning",
+    "name": "Dynamic Top N and Binning Visualizations",
     "icons": [{
         "src": "favicon.ico",
         "sizes": "48x48 32x32 24x24 16x16",

@@ -1,8 +1,8 @@
 {
-  "name": "bin",
+  "name": "top-n-binning",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://hemanrobinson.github.io/bin",
+  "homepage": "https://hemanrobinson.github.io/top-n-binning",
   "dependencies": {
     "@babel/core": "^7.20.12",
     "@emotion/react": "^11.10.5",
