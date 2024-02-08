@@ -6,14 +6,14 @@ import './App.css';
 import github from './github.svg';
 import shneiderman from './shneiderman.png';
 
-// Application:  Dynamic Binning
+// Application:  Dynamic Top N and Binning Visualizations
 const App = () => {
     
     // Return the App.
     return (
         <div className="Column">
             <div className="Description">
-                <h1>Dynamic Binning&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/hemanrobinson/bin/"><img className="icon" title="Code Shared on GitHub" alt="Code Shared on GitHub" src={github}/></a></h1>
+                <h1>Dynamic Top N and Binning Visualizations&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/hemanrobinson/bin/"><img className="icon" title="Code Shared on GitHub" alt="Code Shared on GitHub" src={github}/></a></h1>
                 <p>
                 <a href="https://www.cs.umd.edu/users/ben/">Ben Shneiderman</a> taught us all to <a href="https://www.perceptualedge.com/articles/b-eye/path_to_visual_discovery.pdf">"Overview first, zoom and filter, then details-on-demand"</a> (Shneiderman, 1996).
                 </p>
@@ -21,10 +21,10 @@ const App = () => {
                     <a href="https://www.cs.umd.edu/users/ben/"><img title="Dr. Ben Shneiderman" alt="Dr. Ben Shneiderman" src={shneiderman}/></a>
                 </p>
                 <p>
-                Does "zooming" include binning?  In graphs of aggregated data, zooming the scales may not help us explore.  Adjusting the bins often can.
+                Does "zooming" include binning?  In graphs of aggregated data, zooming the scales may not help us explore.  Adjusting bins and categories often can.
                 </p>
                 <p>
-                Hover over the graphs below to see the binning controls.  Use the sliders to adjust the bins.
+                Hover over the graphs below to see the controls.  Use the sliders to adjust the bins and categories.
                 </p>
                 <h2>Continuous Data</h2>
                 <p>
@@ -43,10 +43,10 @@ const App = () => {
             <div className="Description">
                 <h2>Categorical Data</h2>
                 <p>
-                For categorical data, the smaller categories can be combined into an "Other" bin.  This clearly displays the larger categories -- the "Top 5", "Top 10", or however many the user desires.
+                For categorical data, the smaller categories can be combined into an "Other" bin.  This clearly displays the "Top N" larger categories -- top 5, top 10, or however many the user desires.
                 </p>
                 <p>
-                This is another problem that doesn't have one right answer, so it's best to let the user explore.
+                We don't know what the user desires, and it may depend on the data. So as with the continuous case, it's best to let the user explore.
                 </p>
                 <p>
                 With modern technology, we can make the "Other" bin dynamically adjustable.  This is particularly useful with "long-tailed" distributions, as in the bar chart below.
@@ -70,13 +70,13 @@ const App = () => {
                 To minimize distraction from the data display, controls are displayed only when they can be used.  On desktops, controls are discoverable by hovering over the graph.  (On mobile devices, not supported here, a tap might serve this purpose.)
                 </p>
                 <p>
-                The slider is positioned along the axis to afford direct manipulation in that dimension and to conserve screen real estate.
-                </p>
-                <p>
                   For continuous data, the default bin width is determined by Scott's binning rule (Scott, 1979).  The minimum bin width is the smallest visible width.  The maximum bin width puts all the data in one bin.  These are natural limits that users expect.
                 </p>
                 <p>
-                  For categorical data, an "Other" category with slider can be implemented using a "Top N" filter in Tableau (Sleeper, 2020) and Power BI (Sugar, 2021).  In both products, this does not happen by default, but requires multiple steps.
+                  For categorical data, the default behavior is to show all the categories. At the other extreme, the natural limit is to lump all the data into one category.
+                </p>
+                <p>
+                  Positioning the slider along the axis conserves screen real estate, but the better reason is that it improves usability. This positioning enables the user to focus their eyes in one place, rather than switching between the graph in one place and the controls in another.
                 </p>
                 <h2>Implementation</h2>
                 <p>
@@ -87,9 +87,7 @@ const App = () => {
                     <li>Freedman, D. and Diaconis, P. (1981). "On the histogram as a density estimator: L2 theory". Zeitschrift für Wahrscheinlichkeitstheorie und Verwandte Gebiete. 57 (4): 453–476. <a href="https://bayes.wustl.edu/Manual/FreedmanDiaconis1_1981.pdf">https://bayes.wustl.edu/Manual/FreedmanDiaconis1_1981.pdf</a>.</li><br/>
                     <li>Scott, D. W. (1979). "On optimal and data-based histograms". Biometrika. 66 (3): 605–610. <a href="https://doi.org/10.2307/2335182">https://doi.org/10.2307/2335182</a>.</li><br/>
                     <li>Shneiderman, B. (1996). "The Eyes Have It: A Task by Data Type Taxonomy for Information Visualizations". In Proceedings of the IEEE Symposium on Visual Languages, Sept. 1996, 336-343. <a href="https://www.cs.umd.edu/~ben/papers/Shneiderman1996eyes.pdf">https://www.cs.umd.edu/~ben/papers/Shneiderman1996eyes.pdf</a>.</li><br/>
-                    <li>Sleeper, R. (2023). Innovative Tableau: 100 More Tips, Tutorials, and Strategies. Sebastopol CA: O'Reilly Media. <a href="https://playfairdata.com/tableau-tip-how-to-dynamically-display-the-top-n-vs-other/">https://playfairdata.com/tableau-tip-how-to-dynamically-display-the-top-n-vs-other/</a>.</li><br/>
                     <li>Sturges, H. A. (1926). "The choice of a class interval". Journal of the American Statistical Association. 21 (153): 65–66. <a href="https://www.jstor.org/stable/2965501">https://www.jstor.org/stable/2965501</a>.</li><br/>
-                    <li>Sugar, S. (2021). "Power BI Top N and Other". <a href="https://www.proserveit.com/blog/ms-power-bi-topn-and-other">https://www.proserveit.com/blog/ms-power-bi-topn-and-other</a>.</li><br/>
                 </ul>
             </div>
         </div>

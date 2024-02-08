@@ -1,11 +1,9 @@
-# Dynamic Binning
-
-[This project demonstrates a user interface for interactive binning.](https://hemanrobinson.github.io/bin/)
+# Dynamic Top N and Binning Visualizations
 
 [Ben Shneiderman](https://www.cs.umd.edu/users/ben/) taught us all to ["Overview first, zoom and filter, then details-on-demand"](https://www.perceptualedge.com/articles/b-eye/path_to_visual_discovery.pdf).
 
-Does "zooming" include binning?  In graphs of aggregated data, zooming the scales may not help us explore.  Adjusting the bins often can.
+Does "zooming" include binning?  In graphs of aggregated data, zooming the scales may not help us explore.  Adjusting the bins and categories often can.
 
-[![Bin](src/bin.png "Bin")](https://hemanrobinson.github.io/bin/)
+[This project demonstrates a user interface for interactive top N and binning visualizations.](https://hemanrobinson.github.io/top-n-binning/)
 
-This project uses [React](https://react.dev), [Material-UI](https://github.com/mui-org/material-ui), and [d3](https://github.com/d3/d3).
+[![Dynamic Top and Binning Visualizations](src/top-n-binning.png "Dynamic Top and Binning Visualizations")](https://hemanrobinson.github.io/top-n-binning/)

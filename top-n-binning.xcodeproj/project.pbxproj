@@ -37,7 +37,7 @@
 				BuildIndependentTargetsInParallel = 1;
 				LastUpgradeCheck = 1340;
 			};
-			buildConfigurationList = F83DCFEC291EABE800F96F7A /* Build configuration list for PBXProject "bin" */;
+			buildConfigurationList = F83DCFEC291EABE800F96F7A /* Build configuration list for PBXProject "top-n-binning" */;
 			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -69,7 +69,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		F83DCFEC291EABE800F96F7A /* Build configuration list for PBXProject "bin" */ = {
+		F83DCFEC291EABE800F96F7A /* Build configuration list for PBXProject "top-n-binning" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F83DCFED291EABE800F96F7A /* Debug */,
