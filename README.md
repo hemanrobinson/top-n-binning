@@ -6,4 +6,4 @@ Does "zooming" include binning?  In graphs of aggregated data, zooming the scale
 
 [This project demonstrates a user interface for interactive top N and binning visualizations.](https://hemanrobinson.github.io/top-n-binning/)
 
-[![Dynamic Top and Binning Visualizations](src/top-n-binning.png "Dynamic Top and Binning Visualizations")](https://hemanrobinson.github.io/top-n-binning/)
+[![Dynamic Top and Binning Visualizations](public/top-n-binning-small.png "Dynamic Top and Binning Visualizations")](https://hemanrobinson.github.io/top-n-binning/)
